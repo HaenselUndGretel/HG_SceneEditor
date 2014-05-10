@@ -44,8 +44,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gfx\hansel_cutout.png">
-      <Name>hansel_cutout</Name>
+    <Compile Include="gfx\Hansel.png">
+      <Name>Hansel</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="hug\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="gfx\IconMoveArea.png">
+      <Name>IconMoveArea</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

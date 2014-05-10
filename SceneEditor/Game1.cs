@@ -40,8 +40,6 @@ namespace SceneEditor
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            SceneManager.Instance.AddScene(new EditorScene("Editor"));
-            SceneManager.Instance.SetStartSceneTo("Editor");
             base.Initialize();
         }
 
@@ -52,8 +50,10 @@ namespace SceneEditor
         protected override void LoadContent()
         {
             // TODO: use this.Content to load your game content here
-
+			SceneManager.Instance.AddScene(new EditorScene("Editor"));
+            SceneManager.Instance.SetStartSceneTo("Editor");
             base.LoadContent();
+            
             SceneManager.Instance.GetScene("Editor").Background = "pixel";
         }
 

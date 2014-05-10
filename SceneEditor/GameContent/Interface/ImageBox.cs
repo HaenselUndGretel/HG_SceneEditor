@@ -4,6 +4,7 @@ using KryptonEngine.Interface;
 using KryptonEngine.Manager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SceneEditor.GameContent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,13 @@ using System.Text;
 
 namespace MenuEditor.GameContent.Interface
 {
-    class ImageBox : Box
+    public class ImageBox : Box
     {
-        private struct Data
+        public struct Data
         {
             public Thumbnail Texture;
-            public int Index;
+			public int Index;
+            public String Name;
         }
 
         private class SelectRectangle
@@ -55,15 +57,13 @@ namespace MenuEditor.GameContent.Interface
         }
 
         #region Porperties
-
-        private const int THUMBNAIL_WIDTH = 64;
-        private const int THUMBNAIL_HEIGHT = 64;
         private static SelectRectangle mSelectRectangle;
         private bool mIsSelected;
         private List<Data> mEntity = new List<Data>();
         #endregion
 
         #region Getter & Setter
+		public Data SelectedEntity;
         #endregion
 
         #region Constructor
@@ -71,8 +71,8 @@ namespace MenuEditor.GameContent.Interface
         public ImageBox(Vector2 pPosition, Rectangle pSize)
             : base(pPosition, pSize)
         {
-          mCollisionBox = pSize;
-            mSelectRectangle = new SelectRectangle(Position, new Rectangle(0, 0, THUMBNAIL_WIDTH + 2, THUMBNAIL_HEIGHT + 2));
+			mCollisionBox = pSize;
+			mSelectRectangle = new SelectRectangle(Position, new Rectangle(0, 0, Thumbnail.THUMBNAIL_WIDTH + 2, Thumbnail.THUMBNAIL_HEIGHT + 2));
             SortEntitesOnScreen(Vector2.Zero);
 
         }
@@ -100,12 +100,14 @@ namespace MenuEditor.GameContent.Interface
                     {
                         mSelectRectangle.Position = d.Texture.Position;
                         mIsSelected = true;
+						GameLogic.GhostData = d;
+						if (d.Name == "IconMoveArea")
+							GameLogic.EState = EditorState.PlaceWayPoint;
                         break;
                     }
                     else
                         mIsSelected = false;
                 }
-
                 MouseHelper.ResetClick();
             }
  
@@ -118,13 +120,13 @@ namespace MenuEditor.GameContent.Interface
         {
             mEntity.Clear();
 
-            Dictionary<string, Texture2D> Resourcen = TextureManager.Instance.GetAllEntitys();
+			Dictionary<string, Texture2D> Resourcen = TextureManager.Instance.GetAllGameEntities();
             int posX = 10;
             int posY = 10;
             int index = 0;
 
-            int EntityInRow = (mCollisionBox.Height - 20) / THUMBNAIL_HEIGHT;
-            int EntityInColumn = (mCollisionBox.Width - 20) / THUMBNAIL_WIDTH;
+            int EntityInRow = (mCollisionBox.Height - 20) / Thumbnail.THUMBNAIL_HEIGHT;
+			int EntityInColumn = (mCollisionBox.Width - 20) / Thumbnail.THUMBNAIL_WIDTH;
 
             for (int j = 0; j < EntityInRow; j++)
             {
@@ -134,10 +136,11 @@ namespace MenuEditor.GameContent.Interface
                     {
                         Data tmpData = new Data();
                         tmpData.Texture = new Thumbnail(Position + new Vector2(posX, posY), Resourcen.ElementAt(index).Key);
+						tmpData.Name = tmpData.Texture.TextureName;
                         tmpData.Index = index;
 
                         mEntity.Add(tmpData);
-                        posX += THUMBNAIL_WIDTH + 10;
+						posX += Thumbnail.THUMBNAIL_WIDTH + 10;
                         index++;
                     }
                     else
@@ -146,7 +149,7 @@ namespace MenuEditor.GameContent.Interface
                 if (Resourcen.Count > index)
                 {
                     posX = 10;
-                    posY += THUMBNAIL_HEIGHT;
+					posY += Thumbnail.THUMBNAIL_HEIGHT;
                 }
                 else
                     break;

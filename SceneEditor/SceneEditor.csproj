@@ -81,10 +81,10 @@
     <Compile Include="FormNewGame.Designer.cs">
       <DependentUpon>FormNewGame.cs</DependentUpon>
     </Compile>
+    <Compile Include="GameContent\EditorState.cs" />
     <Compile Include="GameContent\GameLogic.cs" />
     <Compile Include="GameContent\GhostEntity.cs" />
     <Compile Include="GameContent\Interface\ImageBox.cs" />
-    <Compile Include="GameContent\Interface\ImageWindow.cs" />
     <Compile Include="GameContent\Interface\InfoBox.cs" />
     <Compile Include="GameContent\Interface\SaveLoadWindow.cs" />
     <Compile Include="GameContent\Scenes\EditorScene.cs" />
@@ -99,7 +99,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\HG_KryptonEngine\KryptonEngine.csproj">
+    <ProjectReference Include="..\..\HG_Data\HG_Data.csproj">
+      <Project>{21bdae00-db31-4a09-8e55-be172db224ce}</Project>
+      <Name>HG_Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\KryptonEngine\KryptonEngine.csproj">
       <Project>{4beca7bb-c7c4-401e-a263-49b8bbba2cae}</Project>
       <Name>KryptonEngine</Name>
     </ProjectReference>

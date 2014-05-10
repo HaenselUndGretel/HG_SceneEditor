@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SceneEditor.GameContent;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,9 @@ namespace MenuEditor.GameContent
                 mParalllaxNow = value;
             }
         }
+
+		public static MenuEditor.GameContent.Interface.ImageBox.Data GhostData;
+		public static EditorState EState;
         #endregion
     }
 }
