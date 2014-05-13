@@ -9,6 +9,8 @@ namespace SceneEditor.GameContent
 	{
 		Standart,
 		PlaceMoveArea,
-		PlaceWayPoint
+		PlaceWayPoint,
+		PlaceInteractiveObject,
+		PlaceSprites
 	}
 }

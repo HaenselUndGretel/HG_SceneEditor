@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<InteractiveObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Position>
+    <X>-448</X>
+    <Y>-28</Y>
+  </Position>
+  <PositionX>-448</PositionX>
+  <PositionY>-28</PositionY>
+  <CollisionBox>
+    <X>-448</X>
+    <Y>-28</Y>
+    <Width>0</Width>
+    <Height>0</Height>
+    <Location>
+      <X>-448</X>
+      <Y>-28</Y>
+    </Location>
+  </CollisionBox>
+  <IsVisible>true</IsVisible>
+  <ActionRectList />
+  <CollisionRectList>
+    <Rectangle>
+      <X>315</X>
+      <Y>733</Y>
+      <Width>434</Width>
+      <Height>233</Height>
+      <Location>
+        <X>315</X>
+        <Y>733</Y>
+      </Location>
+    </Rectangle>
+  </CollisionRectList>
+  <ActionPosition1>
+    <X>0</X>
+    <Y>0</Y>
+  </ActionPosition1>
+  <ActionPosition2>
+    <X>0</X>
+    <Y>0</Y>
+  </ActionPosition2>
+  <ActionId>0</ActionId>
+  <DrawZ>851</DrawZ>
+  <Texture>
+    <Name />
+  </Texture>
+  <TextureName>screenshot001</TextureName>
+</InteractiveObject>

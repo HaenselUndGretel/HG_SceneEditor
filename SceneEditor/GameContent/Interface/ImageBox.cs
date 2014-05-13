@@ -96,17 +96,24 @@ namespace MenuEditor.GameContent.Interface
             {
                 foreach(Data d in mEntity)
                 {
-                    if (d.Texture.CollisionBox.Contains(MouseHelper.PositionPoint) && MouseHelper.Instance.IsClickedLeft)
-                    {
-                        mSelectRectangle.Position = d.Texture.Position;
-                        mIsSelected = true;
+					if (d.Texture.CollisionBox.Contains(MouseHelper.PositionPoint) && MouseHelper.Instance.IsClickedLeft)
+					{
+						mSelectRectangle.Position = d.Texture.Position;
+						mIsSelected = true;
 						GameLogic.GhostData = d;
 						if (d.Name == "IconMoveArea")
 							GameLogic.EState = EditorState.PlaceWayPoint;
-                        break;
-                    }
-                    else
-                        mIsSelected = false;
+						else if (InteractiveObjectDataManager.Instance.HasElement(d.Name))
+							GameLogic.EState = EditorState.PlaceInteractiveObject;
+						else
+							GameLogic.EState = EditorState.PlaceSprites;
+						break;
+					}
+					else
+					{
+						mIsSelected = false;
+						GameLogic.EState = EditorState.Standart;
+					}
                 }
                 MouseHelper.ResetClick();
             }
