@@ -112,7 +112,7 @@ namespace MenuEditor.GameContent.Interface
 					else
 					{
 						mIsSelected = false;
-						GameLogic.EState = EditorState.Standart;
+						GameLogic.EState = EditorState.Standard;
 					}
                 }
                 MouseHelper.ResetClick();

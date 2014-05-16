@@ -82,7 +82,7 @@ namespace MenuEditor.GameContent.Scenes
 			mClearColor = Color.Red;
 
             mMouseCenter = Vector2.Zero;
-			GameLogic.EState = EditorState.Standart;
+			GameLogic.EState = EditorState.Standard;
 
 			mPlaneVisible = new bool[5] { true, true, true, true, true };
         }
@@ -233,6 +233,9 @@ namespace MenuEditor.GameContent.Scenes
             else
                 mMouseCenter = Vector2.Zero;
 
+			if(MouseHelper.Instance.IsClickedLeft)
+				UpdateSelectedEntity();
+			
 			if (GameLogic.EState != EditorState.PlaceMoveArea)
 			{
 				if (MouseHelper.Instance.IsWheelUp)
@@ -243,7 +246,7 @@ namespace MenuEditor.GameContent.Scenes
 
 			switch(GameLogic.EState)
 			{ 
-				case EditorState.Standart:
+				case EditorState.Standard:
 					break;
 				case EditorState.PlaceMoveArea:
 					UpdateRectInput();
@@ -263,7 +266,7 @@ namespace MenuEditor.GameContent.Scenes
 					if (MouseHelper.Instance.IsClickedLeft)
 						PlaceSprite();
 					break;
-			}	
+			}
         }
 
 		private void UpdateRectInput()
@@ -283,18 +286,19 @@ namespace MenuEditor.GameContent.Scenes
 
 			if (IsDrawingRectangle && MouseHelper.Instance.IsReleasedLeft)
 			{
-				switch(GameLogic.EState)
-				{
-					case EditorState.PlaceMoveArea:
-						mlevelSceneData.MoveArea.Add(tmpRectangle);
-						break;
-					case EditorState.PlaceWayPoint:
-						Waypoint w = new Waypoint();
-						w.CollisionBox = tmpRectangle;
-						w.Texture = GameLogic.GhostData.Texture.Texture;
-						mlevelSceneData.Waypoints.Add(w);
-						break;
-				}
+				if(!tmpRectangle.IsEmpty)
+					switch(GameLogic.EState)
+					{
+						case EditorState.PlaceMoveArea:
+							mlevelSceneData.MoveArea.Add(tmpRectangle);
+							break;
+						case EditorState.PlaceWayPoint:
+							Waypoint w = new Waypoint();
+							w.CollisionBox = tmpRectangle;
+							w.Texture = GameLogic.GhostData.Texture.Texture;
+							mlevelSceneData.Waypoints.Add(w);
+							break;
+					}
 				IsDrawingRectangle = false;
 			}
 		}
@@ -330,12 +334,12 @@ namespace MenuEditor.GameContent.Scenes
 			ioNew.Texture = ioDefault.Texture;
 			ioNew.TextureName = ioDefault.TextureName;
 			ioNew.Position = MouseHelper.Position - new Vector2(ioNew.Texture.Width / 2, ioNew.Texture.Height / 2) - mCamera.Position;
-			
+
 			for (int i = 0; i < ioDefault.ActionRectList.Count; i++)
 			{
 				ioNew.ActionRectList.Add(new Rectangle
-					(ioDefault.ActionRectList[i].X + ioNew.PositionX,
-					 ioDefault.ActionRectList[i].Y + ioNew.PositionY,
+					(ioDefault.ActionRectList[i].X + ioNew.PositionX,// - ioNew.Texture.Width / 2,// - (int)mCamera.Position.X,
+					 ioDefault.ActionRectList[i].Y + ioNew.PositionY,// - ioNew.Texture.Height / 2,// - (int)mCamera.Position.Y,
 					 ioDefault.ActionRectList[i].Width,
 					 ioDefault.ActionRectList[i].Height));
 			}
@@ -343,8 +347,8 @@ namespace MenuEditor.GameContent.Scenes
 			for (int i = 0; i < ioDefault.CollisionRectList.Count; i++)
 			{
 				ioNew.CollisionRectList.Add(new Rectangle
-					(ioDefault.CollisionRectList[i].X + ioNew.PositionX + ioDefault.CollisionRectList[i].Width,
-					 ioDefault.CollisionRectList[i].Y + ioNew.PositionY,
+					(ioDefault.CollisionRectList[i].X + ioNew.PositionX,// - ioNew.Texture.Width / 2,// - (int)mCamera.Position.X,
+					 ioDefault.CollisionRectList[i].Y + ioNew.PositionY,// - ioNew.Texture.Height / 2,// - (int)mCamera.Position.Y,
 					 ioDefault.CollisionRectList[i].Width,
 					 ioDefault.CollisionRectList[i].Height));
 			}
@@ -355,7 +359,7 @@ namespace MenuEditor.GameContent.Scenes
 				ioNew.ActionPosition2 = ioDefault.ActionPosition2 + ioNew.Position;
 
 			if (ioDefault.DrawZ != 0)
-				ioNew.DrawZ = ioDefault.DrawZ + ioNew.PositionY;
+				ioNew.DrawZ = ioDefault.DrawZ + ioNew.PositionY - ioNew.Texture.Height / 2;
 
 			PlaceElementInPlane(ioNew);
 		}
@@ -365,6 +369,22 @@ namespace MenuEditor.GameContent.Scenes
 			Sprite s = new Sprite(Vector2.Zero, GameLogic.GhostData.Name);
 			s.Position = MouseHelper.Position - new Vector2(s.Texture.Width / 2, s.Texture.Height / 2) - mCamera.Position;
 			PlaceElementInPlane(s);
+		}
+
+		private void UpdateSelectedEntity()
+		{
+			switch(GameLogic.EState)
+			{
+				case EditorState.PlaceWayPoint:
+					foreach (Waypoint w in mlevelSceneData.Waypoints)
+						if (w.CollisionBox.Contains(MouseHelper.PositionPoint))
+						{
+							mObjectInfoBox.InfoObject = w;
+							MouseHelper.ResetClick();
+							return;
+						}
+					break;
+			}
 		}
 
 		/// <summary>
@@ -479,6 +499,7 @@ namespace MenuEditor.GameContent.Scenes
 			MouseHelper.ResetClick();
 		}
 
+		// Muss Ingame auch getätigt werden.
 		private void LoadAllTexturesInPlanes()
 		{
 			for (int i = 4; i >= 0; i-- )
@@ -488,12 +509,12 @@ namespace MenuEditor.GameContent.Scenes
 					if (go.GetType() == typeof(Sprite))
 					{
 						Sprite s = (Sprite)go;
-						s.Texture = TextureManager.Instance.GetElementByString(s.TextureName); ;
+						s.Texture = TextureManager.Instance.GetElementByString(s.TextureName);
 					}
 					if (go.GetType() == typeof(InteractiveObject))
 					{
 						InteractiveObject io = (InteractiveObject)go;
-						io.TextureName = io.TextureName;
+						io.Texture = TextureManager.Instance.GetElementByString(io.TextureName);
 					}
 				}
 			}

@@ -7,10 +7,12 @@ namespace SceneEditor.GameContent
 {
 	public enum EditorState
 	{
-		Standart,
+		Standard,
 		PlaceMoveArea,
 		PlaceWayPoint,
 		PlaceInteractiveObject,
-		PlaceSprites
+		PlaceSprites,
+		PlaceCollectable,
+		PlaceItem
 	}
 }

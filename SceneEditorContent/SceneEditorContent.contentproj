@@ -80,8 +80,24 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="gfx\auge.png">
+      <Name>auge</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\gretel.png">
+      <Name>gretel</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="iObj\screenshot001.iObj">
       <Name>screenshot001</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="iObj\Hansel.iObj">
+      <Name>Hansel</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
