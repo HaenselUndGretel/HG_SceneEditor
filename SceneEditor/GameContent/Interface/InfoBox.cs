@@ -15,11 +15,11 @@ namespace MenuEditor.GameContent.Interface
 
         private const int FONT_PADDING_LEFT = 10;
         String mBoxName;
-        BaseObject mInfoObj;
+        //BaseObject mInfoObj;
         #endregion
 
         #region Getter & Setter
-        public BaseObject InfoObject { set { mInfoObj = value; } }
+        //public BaseObject InfoObject { set { mInfoObj = value; } }
         #endregion
 
         #region Constructor
@@ -27,8 +27,6 @@ namespace MenuEditor.GameContent.Interface
             : base(pPosition, pRectangle)
         {
             mBoxName = "Infobox:";
-
-            mInfoObj = new Sprite(new Vector2(200, 200), "pixel");
         }
         #endregion
 
@@ -41,8 +39,8 @@ namespace MenuEditor.GameContent.Interface
             if (!IsVisible) return;
 
             spriteBatch.DrawString(font, mBoxName, new Vector2(PositionX + FONT_PADDING_LEFT, PositionY + 5), Color.Black);
-            if(mInfoObj != null)
-                spriteBatch.DrawString(font, mInfoObj.GetInfo(), new Vector2(PositionX + FONT_PADDING_LEFT, PositionY + 30), Color.Black);
+            if (GameLogic.SelectedEntity != null)
+                spriteBatch.DrawString(font, GameLogic.SelectedEntity.GetInfo(), new Vector2(PositionX + FONT_PADDING_LEFT, PositionY + 30), Color.Black);
 
             spriteBatch.DrawString(font, "Aktuelle Ebene: " + GameLogic.ParallaxLayerNow, new Vector2(PositionX + FONT_PADDING_LEFT, PositionY + mCollisionBox.Height - 30), Color.Black);
         }

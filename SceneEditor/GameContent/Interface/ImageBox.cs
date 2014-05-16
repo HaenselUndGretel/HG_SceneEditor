@@ -12,6 +12,45 @@ using System.Text;
 
 namespace MenuEditor.GameContent.Interface
 {
+    public class SelectRectangle
+    {
+        public Vector2 Position;
+
+        private Rectangle Top;
+        private Rectangle Bottom;
+        private Rectangle Left;
+        private Rectangle Right;
+        private Rectangle Select;
+        private Texture2D mTexture;
+
+        private bool mIsSelected;
+        public bool IsSelected { get { return mIsSelected; } set { mIsSelected = value; } }
+
+        public SelectRectangle(Vector2 pPosition, Rectangle pRectangleSize)
+        {
+            Position = pPosition;
+
+            // Many Magic Numbers !!!
+            Top = new Rectangle(0, 0, pRectangleSize.Width - 2, 1);
+            Bottom = new Rectangle(0, pRectangleSize.Height - 2, pRectangleSize.Width - 1, 1);
+            Left = new Rectangle(0, 0, 1, pRectangleSize.Height - 2);
+            Right = new Rectangle(pRectangleSize.Width - 2, 0, 1, pRectangleSize.Height - 2);
+            Select = new Rectangle(1, 1, pRectangleSize.Width - 3, pRectangleSize.Height - 3);
+
+            IsSelected = true;
+            mTexture = TextureManager.Instance.GetElementByString("pixel");
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Vector2(Position.X + Top.X, Position.Y + Top.Y), Top, Color.Blue);
+            spriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Vector2(Position.X + Bottom.X, Position.Y + Bottom.Y), Bottom, Color.Blue);
+            spriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Vector2(Position.X + Left.X, Position.Y + Left.Y), Left, Color.Blue);
+            spriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Vector2(Position.X + Right.X, Position.Y + Right.Y), Right, Color.Blue);
+            spriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Vector2(Position.X + Select.X, Position.Y + Select.Y), Select, Color.Red * 0.5f);
+        }
+    }
+
     public class ImageBox : Box
     {
         public struct Data
@@ -21,49 +60,13 @@ namespace MenuEditor.GameContent.Interface
             public String Name;
         }
 
-        private class SelectRectangle
-        {
-            public Vector2 Position;
-
-            private Rectangle Top;
-            private Rectangle Bottom;
-            private Rectangle Left;
-            private Rectangle Right;
-            private Rectangle Select;
-            private Texture2D mTexture;
-
-            public SelectRectangle(Vector2 pPosition, Rectangle pRectangleSize)
-            {
-                Position = pPosition;
-
-                // Many Magic Numbers !!!
-                Top = new Rectangle(0, 0, pRectangleSize.Width-2, 1);
-                Bottom = new Rectangle(0, pRectangleSize.Height-2, pRectangleSize.Width-1, 1);
-                Left = new Rectangle(0, 0, 1, pRectangleSize.Height-2);
-                Right = new Rectangle(pRectangleSize.Width-2, 0, 1, pRectangleSize.Height-2);
-                Select = new Rectangle(1 , 1, pRectangleSize.Width-3, pRectangleSize.Height-3);
-
-                mTexture = TextureManager.Instance.GetElementByString("pixel");
-            }
-
-            public void Draw(SpriteBatch spriteBatch)
-            {
-                spriteBatch.Draw(mTexture, new Vector2(Position.X + Top.X, Position.Y + Top.Y), Top, Color.Blue);
-                spriteBatch.Draw(mTexture, new Vector2(Position.X + Bottom.X, Position.Y + Bottom.Y), Bottom, Color.Blue);
-                spriteBatch.Draw(mTexture, new Vector2(Position.X + Left.X, Position.Y + Left.Y), Left, Color.Blue);
-                spriteBatch.Draw(mTexture, new Vector2(Position.X + Right.X, Position.Y + Right.Y), Right, Color.Blue);
-                spriteBatch.Draw(mTexture, new Vector2(Position.X + Select.X, Position.Y + Select.Y), Select, Color.Red * 0.5f);
-            }
-        }
-
         #region Porperties
-        private static SelectRectangle mSelectRectangle;
-        private bool mIsSelected;
         private List<Data> mEntity = new List<Data>();
         #endregion
 
         #region Getter & Setter
 		public Data SelectedEntity;
+        public SelectRectangle SelectRectangleObject;
         #endregion
 
         #region Constructor
@@ -72,8 +75,9 @@ namespace MenuEditor.GameContent.Interface
             : base(pPosition, pSize)
         {
 			mCollisionBox = pSize;
-			mSelectRectangle = new SelectRectangle(Position, new Rectangle(0, 0, Thumbnail.THUMBNAIL_WIDTH + 2, Thumbnail.THUMBNAIL_HEIGHT + 2));
+			SelectRectangleObject = new SelectRectangle(Position, new Rectangle(0, 0, Thumbnail.THUMBNAIL_WIDTH + 2, Thumbnail.THUMBNAIL_HEIGHT + 2));
             SortEntitesOnScreen(Vector2.Zero);
+            SelectRectangleObject.IsSelected = false;
 
         }
         #endregion
@@ -86,8 +90,8 @@ namespace MenuEditor.GameContent.Interface
             base.Draw(spriteBatch);
 
             DrawThumbnails(spriteBatch);
-            if(mIsSelected)
-                mSelectRectangle.Draw(spriteBatch);
+            if(SelectRectangleObject.IsSelected)
+                SelectRectangleObject.Draw(spriteBatch);
         }
 
         public override void Update()
@@ -98,8 +102,8 @@ namespace MenuEditor.GameContent.Interface
                 {
 					if (d.Texture.CollisionBox.Contains(MouseHelper.PositionPoint) && MouseHelper.Instance.IsClickedLeft)
 					{
-						mSelectRectangle.Position = d.Texture.Position;
-						mIsSelected = true;
+						SelectRectangleObject.Position = d.Texture.Position;
+                        SelectRectangleObject.IsSelected = true;
 						GameLogic.GhostData = d;
 						if (d.Name == "IconMoveArea")
 							GameLogic.EState = EditorState.PlaceWayPoint;
@@ -108,10 +112,11 @@ namespace MenuEditor.GameContent.Interface
 						else
 							GameLogic.EState = EditorState.PlaceSprites;
 						break;
-					}
+                    }
 					else
 					{
-						mIsSelected = false;
+						SelectRectangleObject.IsSelected = false;
+                        GameLogic.SelectedEntity = null;
 						GameLogic.EState = EditorState.Standard;
 					}
                 }

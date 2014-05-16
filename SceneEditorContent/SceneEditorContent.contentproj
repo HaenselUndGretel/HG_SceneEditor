@@ -96,6 +96,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="iObj\stamm01.iObj">
+      <Name>stamm01</Name>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="iObj\Hansel.iObj">
       <Name>Hansel</Name>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

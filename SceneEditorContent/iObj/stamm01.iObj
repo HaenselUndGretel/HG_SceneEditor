@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <InteractiveObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Position>
-    <X>0</X>
-    <Y>0</Y>
+    <X>-448</X>
+    <Y>-28</Y>
   </Position>
-  <PositionX>0</PositionX>
-  <PositionY>0</PositionY>
+  <PositionX>-448</PositionX>
+  <PositionY>-28</PositionY>
   <CollisionBox>
-    <X>0</X>
-    <Y>0</Y>
+    <X>-448</X>
+    <Y>-28</Y>
     <Width>0</Width>
     <Height>0</Height>
     <Location>
-      <X>0</X>
-      <Y>0</Y>
+      <X>-448</X>
+      <Y>-28</Y>
     </Location>
   </CollisionBox>
   <IsVisible>true</IsVisible>
   <DrawZ>0</DrawZ>
   <ActionRectList>
     <Rectangle>
-      <X>-166</X>
-      <Y>223</Y>
-      <Width>363</Width>
-      <Height>149</Height>
+      <X>166</X>
+      <Y>632</Y>
+      <Width>721</Width>
+      <Height>223</Height>
       <Location>
-        <X>-166</X>
-        <Y>223</Y>
+        <X>166</X>
+        <Y>632</Y>
       </Location>
     </Rectangle>
   </ActionRectList>
   <CollisionRectList>
     <Rectangle>
-      <X>-87</X>
-      <Y>-283</Y>
-      <Width>168</Width>
-      <Height>544</Height>
+      <X>315</X>
+      <Y>302</Y>
+      <Width>423</Width>
+      <Height>346</Height>
       <Location>
-        <X>-87</X>
-        <Y>-283</Y>
+        <X>315</X>
+        <Y>302</Y>
       </Location>
     </Rectangle>
   </CollisionRectList>
@@ -54,5 +54,5 @@
   <Texture>
     <Name />
   </Texture>
-  <TextureName>Hansel</TextureName>
+  <TextureName>stamm01</TextureName>
 </InteractiveObject>

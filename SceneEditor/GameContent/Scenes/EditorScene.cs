@@ -49,9 +49,15 @@ namespace MenuEditor.GameContent.Scenes
 		private Rectangle tmpRectangle;
 		#endregion
 
-		#region MouseMove
+        #region KeyboardInput
 
-		private const float SPEED_CAMERA_MOVE = 15.0f;
+        protected KeyboardState ksCurrent;
+        protected KeyboardState ksLast;
+        #endregion
+
+        #region MouseMove
+
+        private const float SPEED_CAMERA_MOVE = 15.0f;
         private Vector2 mMouseCenter;
         #endregion
         #endregion
@@ -120,10 +126,19 @@ namespace MenuEditor.GameContent.Scenes
 			mInterfaceObjects.Add(mObjectInfoBox);
             mInterfaceObjects.Add(mIconBox);
             mInterfaceObjects.Add(mObjectBox);
+
+            GameLogic.Initialize();
         }
 
         public override void Update()
         {
+            ksLast = ksCurrent;
+            ksCurrent = Keyboard.GetState();
+            if (GameLogic.SelectedEntity != null
+                && ksLast.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Delete)
+                && ksCurrent.IsKeyUp(Microsoft.Xna.Framework.Input.Keys.Delete))
+                RemoveObjectFromPlane();
+
             foreach (InterfaceObject io in mInterfaceObjects)
                 io.Update();
 
@@ -149,6 +164,8 @@ namespace MenuEditor.GameContent.Scenes
 					DrawWayPoints();
 					break;
 			}
+
+            DrawSelectedRectangle();
 
             DrawMenueItems();
 
@@ -189,6 +206,8 @@ namespace MenuEditor.GameContent.Scenes
 
 		private void DrawGhostEntity()
 		{
+            if (GameLogic.GhostData.Name == "") return;
+
 			if (GameLogic.GhostData.Texture != null)
 			{
 				mSpriteBatch.Begin();
@@ -205,9 +224,9 @@ namespace MenuEditor.GameContent.Scenes
 				if(mPlaneVisible[i])
 				{
 					mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
-					foreach (GameObject go in mlevelSceneData.ParallaxPlanes[i])
-						go.Draw(mSpriteBatch);
-					mSpriteBatch.End();
+                    foreach (GameObject go in mlevelSceneData.ParallaxPlanes[i].Tiles)
+                        go.Draw(mSpriteBatch);
+                    mSpriteBatch.End();
 				}
 
 				if (GameLogic.ParallaxLayerNow == i)
@@ -225,6 +244,17 @@ namespace MenuEditor.GameContent.Scenes
 			mSpriteBatch.End();
 		}
 
+        private void DrawSelectedRectangle()
+        {
+            if (GameLogic.SelectEntityRectangle.IsSelected)
+            {
+                mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
+                GameLogic.SelectEntityRectangle.Draw(mSpriteBatch);
+                mSpriteBatch.End();
+
+            }
+        }
+
 		#endregion
 		public void UpdateMouseInput()
         {
@@ -233,8 +263,15 @@ namespace MenuEditor.GameContent.Scenes
             else
                 mMouseCenter = Vector2.Zero;
 
-			if(MouseHelper.Instance.IsClickedLeft)
-				UpdateSelectedEntity();
+            if (MouseHelper.Instance.IsClickedRight)
+            {
+                GameLogic.EState = EditorState.Standard;
+                GameLogic.GhostData.Name = "";
+                GameLogic.SelectEntityRectangle.IsSelected = false;
+                mObjectBox.SelectRectangleObject.IsSelected = false;
+                mObjectBox.SelectedEntity.Name = "";
+                GameLogic.SelectedEntity = null;
+            }
 			
 			if (GameLogic.EState != EditorState.PlaceMoveArea)
 			{
@@ -247,6 +284,8 @@ namespace MenuEditor.GameContent.Scenes
 			switch(GameLogic.EState)
 			{ 
 				case EditorState.Standard:
+                    if(MouseHelper.Instance.IsClickedLeft)
+                        UpdateSelectedEntity();
 					break;
 				case EditorState.PlaceMoveArea:
 					UpdateRectInput();
@@ -254,9 +293,13 @@ namespace MenuEditor.GameContent.Scenes
 						UpdateMoveRectDelete();
 					break;
 				case EditorState.PlaceWayPoint:
+                    if(MouseHelper.Instance.IsClickedLeft)
+                        UpdateSelectedEntity();
 					UpdateRectInput();
 					if(MouseHelper.Instance.IsClickedRight)
+                    { 
 						UpdateMoveRectDelete();
+                    }
 					break;
 				case EditorState.PlaceInteractiveObject:
 					if (MouseHelper.Instance.IsClickedLeft)
@@ -333,13 +376,14 @@ namespace MenuEditor.GameContent.Scenes
 
 			ioNew.Texture = ioDefault.Texture;
 			ioNew.TextureName = ioDefault.TextureName;
-			ioNew.Position = MouseHelper.Position - new Vector2(ioNew.Texture.Width / 2, ioNew.Texture.Height / 2) - mCamera.Position;
+            ioNew.Position = MouseHelper.Position - mCamera.Position;
+            ioNew.CollisionBox = new Rectangle((int)ioNew.Position.X,(int) ioNew.Position.Y, ioNew.Texture.Width, ioNew.Texture.Height);
 
 			for (int i = 0; i < ioDefault.ActionRectList.Count; i++)
 			{
 				ioNew.ActionRectList.Add(new Rectangle
-					(ioDefault.ActionRectList[i].X + ioNew.PositionX,// - ioNew.Texture.Width / 2,// - (int)mCamera.Position.X,
-					 ioDefault.ActionRectList[i].Y + ioNew.PositionY,// - ioNew.Texture.Height / 2,// - (int)mCamera.Position.Y,
+					(ioDefault.ActionRectList[i].X + ioNew.PositionX,
+					 ioDefault.ActionRectList[i].Y + ioNew.PositionY,
 					 ioDefault.ActionRectList[i].Width,
 					 ioDefault.ActionRectList[i].Height));
 			}
@@ -347,8 +391,8 @@ namespace MenuEditor.GameContent.Scenes
 			for (int i = 0; i < ioDefault.CollisionRectList.Count; i++)
 			{
 				ioNew.CollisionRectList.Add(new Rectangle
-					(ioDefault.CollisionRectList[i].X + ioNew.PositionX,// - ioNew.Texture.Width / 2,// - (int)mCamera.Position.X,
-					 ioDefault.CollisionRectList[i].Y + ioNew.PositionY,// - ioNew.Texture.Height / 2,// - (int)mCamera.Position.Y,
+					(ioDefault.CollisionRectList[i].X + ioNew.PositionX,
+					 ioDefault.CollisionRectList[i].Y + ioNew.PositionY,
 					 ioDefault.CollisionRectList[i].Width,
 					 ioDefault.CollisionRectList[i].Height));
 			}
@@ -360,6 +404,8 @@ namespace MenuEditor.GameContent.Scenes
 
 			if (ioDefault.DrawZ != 0)
 				ioNew.DrawZ = ioDefault.DrawZ + ioNew.PositionY - ioNew.Texture.Height / 2;
+
+            ioNew.Position = MouseHelper.Position - new Vector2(ioNew.Texture.Width / 2, ioNew.Texture.Height / 2) - mCamera.Position;
 
 			PlaceElementInPlane(ioNew);
 		}
@@ -373,19 +419,50 @@ namespace MenuEditor.GameContent.Scenes
 
 		private void UpdateSelectedEntity()
 		{
+            bool changeEntity = false;
+
 			switch(GameLogic.EState)
 			{
+                case EditorState.Standard:
+                    foreach(GameObject go in mlevelSceneData.ParallaxPlanes[GameLogic.ParallaxLayerNow].Tiles)
+                        if (go.CollisionBox.Contains(new Point(MouseHelper.PositionPoint.X - (int)mCamera.Position.X, MouseHelper.PositionPoint.Y - (int)mCamera.Position.Y)))
+                        {
+                            GameLogic.SelectedEntity = go;
+                            GameLogic.SelectEntityRectangle = new SelectRectangle(go.Position, go.CollisionBox);
+                            MouseHelper.ResetClick();
+                            changeEntity = true;
+                            return;
+                        }
+                    break;
+
 				case EditorState.PlaceWayPoint:
 					foreach (Waypoint w in mlevelSceneData.Waypoints)
-						if (w.CollisionBox.Contains(MouseHelper.PositionPoint))
+                        if (w.CollisionBox.Contains(new Point(MouseHelper.PositionPoint.X - (int)mCamera.Position.X, MouseHelper.PositionPoint.Y - (int)mCamera.Position.Y)))
 						{
-							mObjectInfoBox.InfoObject = w;
+                            GameLogic.SelectedEntity = w;
+                            GameLogic.SelectEntityRectangle = new SelectRectangle(new Vector2(w.CollisionBox.X, w.CollisionBox.Y), w.CollisionBox);
 							MouseHelper.ResetClick();
+                            changeEntity = true;
 							return;
 						}
 					break;
 			}
+
+            if(!changeEntity)
+            {
+                GameLogic.SelectedEntity = null;
+                GameLogic.SelectEntityRectangle.IsSelected = false;
+            }
 		}
+
+        private void RemoveObjectFromPlane()
+        {
+            mlevelSceneData.ParallaxPlanes[GameLogic.ParallaxLayerNow].Tiles.Remove(GameLogic.SelectedEntity);
+            GameLogic.SelectEntityRectangle.IsSelected = false;
+            GameLogic.SelectedEntity = null;
+            GameLogic.GhostData.Name = "";
+            GameLogic.EState = EditorState.Standard;
+        }
 
 		/// <summary>
 		/// Setzt das Gameobject auf die richtige Plane
@@ -393,7 +470,9 @@ namespace MenuEditor.GameContent.Scenes
 		/// <param name="go"></param>
 		private void PlaceElementInPlane(GameObject go)
 		{
-			mlevelSceneData.ParallaxPlanes[GameLogic.ParallaxLayerNow].Add(go);
+			mlevelSceneData.ParallaxPlanes[GameLogic.ParallaxLayerNow].Tiles.Add(go);
+            GameLogic.SelectedEntity = go;
+            GameLogic.SelectEntityRectangle = new SelectRectangle(go.Position, go.CollisionBox);
 		}
 
         private void MoveCameraByMouse()
@@ -473,11 +552,11 @@ namespace MenuEditor.GameContent.Scenes
 					reader.Close();
 					myStream.Close();
 
-					// Ersten 5 Listen löschen wichtig!!!
-					for(int i = 0; i < 5; i++)
-					{
-						mlevelSceneData.ParallaxPlanes.RemoveAt(0);
-					}
+                    //// Ersten 5 Listen löschen wichtig!!!
+                    //for(int i = 0; i < 5; i++)
+                    //{
+                    //    mlevelSceneData.ParallaxPlanes.RemoveAt(0);
+                    //}
 				}
 			LoadAllTexturesInPlanes();
 			}
@@ -504,7 +583,7 @@ namespace MenuEditor.GameContent.Scenes
 		{
 			for (int i = 4; i >= 0; i-- )
 			{
-				foreach (GameObject go in mlevelSceneData.ParallaxPlanes[i])
+				foreach (GameObject go in mlevelSceneData.ParallaxPlanes[i].Tiles)
 				{
 					if (go.GetType() == typeof(Sprite))
 					{
