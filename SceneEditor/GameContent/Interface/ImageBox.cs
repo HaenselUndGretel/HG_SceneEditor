@@ -62,6 +62,7 @@ namespace MenuEditor.GameContent.Interface
 
         #region Porperties
         private List<Data> mEntity = new List<Data>();
+		private const int THUMBNAIL_PADDING = 10;
         #endregion
 
         #region Getter & Setter
@@ -107,6 +108,10 @@ namespace MenuEditor.GameContent.Interface
 						GameLogic.GhostData = d;
 						if (d.Name == "IconMoveArea")
 							GameLogic.EState = EditorState.PlaceWayPoint;
+						else if (d.Name.Contains("Collectable"))
+							GameLogic.EState = EditorState.PlaceCollectable;
+						else if (d.Name.Contains("Item"))
+							GameLogic.EState = EditorState.PlaceItem;
 						else if (InteractiveObjectDataManager.Instance.HasElement(d.Name))
 							GameLogic.EState = EditorState.PlaceInteractiveObject;
 						else
@@ -133,39 +138,32 @@ namespace MenuEditor.GameContent.Interface
             mEntity.Clear();
 
 			Dictionary<string, Texture2D> Resourcen = TextureManager.Instance.GetAllGameEntities();
-            int posX = 10;
-            int posY = 10;
+			int posX = THUMBNAIL_PADDING;
+			int posY = THUMBNAIL_PADDING;
             int index = 0;
 
-            int EntityInRow = (mCollisionBox.Height - 20) / Thumbnail.THUMBNAIL_HEIGHT;
-			int EntityInColumn = (mCollisionBox.Width - 20) / Thumbnail.THUMBNAIL_WIDTH;
 
-            for (int j = 0; j < EntityInRow; j++)
-            {
-                for (int k = 0; k < EntityInColumn; k++)
-                {
-                    if (Resourcen.Count > index)
-                    {
-                        Data tmpData = new Data();
-                        tmpData.Texture = new Thumbnail(Position + new Vector2(posX, posY), Resourcen.ElementAt(index).Key);
+			while(Resourcen.Count > index)
+			{
+				while(posX < mDrawRectangle.Width - Thumbnail.THUMBNAIL_WIDTH)
+				{
+					if (Resourcen.Count > index)
+					{
+						Data tmpData = new Data();
+						tmpData.Texture = new Thumbnail(Position + new Vector2(posX, posY), Resourcen.ElementAt(index).Key);
 						tmpData.Name = tmpData.Texture.TextureName;
-                        tmpData.Index = index;
+						tmpData.Index = index;
 
-                        mEntity.Add(tmpData);
-						posX += Thumbnail.THUMBNAIL_WIDTH + 10;
-                        index++;
-                    }
-                    else
-                        break;
-                }
-                if (Resourcen.Count > index)
-                {
-                    posX = 10;
-					posY += Thumbnail.THUMBNAIL_HEIGHT;
-                }
-                else
-                    break;
-            }
+						mEntity.Add(tmpData);
+						posX += Thumbnail.THUMBNAIL_WIDTH + THUMBNAIL_PADDING;
+						index++;
+					}
+					else
+						break;
+				}
+				posX = 10;
+				posY += Thumbnail.THUMBNAIL_HEIGHT + THUMBNAIL_PADDING;
+			}
         }
 
         private void DrawThumbnails(SpriteBatch spriteBatch)

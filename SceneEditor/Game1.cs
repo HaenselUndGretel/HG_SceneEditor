@@ -26,12 +26,12 @@ namespace SceneEditor
             EngineSettings.OnWindows = true;
             EngineSettings.IsDebug = false;
 
-            //EngineSettings.SetDisplayResolution(1280 + 1280, 740);
-            //EngineSettings.SetResolution(1280 + 1280, 740);
+			EngineSettings.SetDisplayResolution(1280 + 1280, 740);
+			EngineSettings.SetResolution(1280 + 1280, 740);
 
             // 1 Bildschirm
-            EngineSettings.SetDisplayResolution(1980,740);
-            EngineSettings.SetResolution(1280 + 1280, 740);
+			//EngineSettings.SetDisplayResolution(1980,740);
+			//EngineSettings.SetResolution(1280 + 1280, 740);
 
             this.IsMouseVisible = true;
         }
