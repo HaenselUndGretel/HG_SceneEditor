@@ -392,7 +392,8 @@ namespace MenuEditor.GameContent.Scenes
 
 			if (IsDrawingRectangle && MouseHelper.Instance.IsReleasedLeft)
 			{
-				if(!tmpRectangle.IsEmpty)
+				if(tmpRectangle.Width > 0
+					&& tmpRectangle.Height > 0)
 					switch(GameLogic.EState)
 					{
 						case EditorState.PlaceMoveArea:
