@@ -112,6 +112,8 @@ namespace MenuEditor.GameContent.Interface
 							GameLogic.EState = EditorState.PlaceCollectable;
 						else if (d.Name.Contains("Item"))
 							GameLogic.EState = EditorState.PlaceItem;
+						else if (d.Name.Contains("Light"))
+							GameLogic.EState = EditorState.PlaceLight;
 						else if (InteractiveObjectDataManager.Instance.HasElement(d.Name))
 							GameLogic.EState = EditorState.PlaceInteractiveObject;
 						else

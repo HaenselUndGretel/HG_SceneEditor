@@ -13,6 +13,7 @@ namespace SceneEditor.GameContent
 		PlaceInteractiveObject,
 		PlaceSprites,
 		PlaceCollectable,
-		PlaceItem
+		PlaceItem,
+		PlaceLight
 	}
 }

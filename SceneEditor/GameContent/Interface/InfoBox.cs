@@ -42,6 +42,7 @@ namespace MenuEditor.GameContent.Interface
             if (GameLogic.SelectedEntity != null)
                 spriteBatch.DrawString(font, GameLogic.SelectedEntity.GetInfo(), new Vector2(PositionX + FONT_PADDING_LEFT, PositionY + 30), Color.Black);
 
+			spriteBatch.DrawString(font, "EditorState: " + GameLogic.EState, new Vector2(PositionX + FONT_PADDING_LEFT, PositionY + mCollisionBox.Height - 50), Color.Black);
             spriteBatch.DrawString(font, "Aktuelle Ebene: " + GameLogic.ParallaxLayerNow, new Vector2(PositionX + FONT_PADDING_LEFT, PositionY + mCollisionBox.Height - 30), Color.Black);
         }
         #endregion

@@ -156,8 +156,20 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="gfx\IconLight.png">
-      <Name>IconLight</Name>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="gfx\IconDirectionLight.png">
+      <Name>IconDirectionLight</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\IconPointLight.png">
+      <Name>IconPointLight</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\IconSpotLight.png">
+      <Name>IconSpotLight</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
