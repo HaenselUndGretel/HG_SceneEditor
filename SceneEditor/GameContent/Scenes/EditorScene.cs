@@ -17,7 +17,6 @@ using System.Xml.Serialization;
 using HanselAndGretel.Data;
 using SceneEditor.GameContent;
 using Microsoft.Xna.Framework.Input;
-using HG_Data.Objects.Lights;
 
 namespace MenuEditor.GameContent.Scenes
 {
@@ -151,6 +150,7 @@ namespace MenuEditor.GameContent.Scenes
                 && ksLast.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Delete)
                 && ksCurrent.IsKeyUp(Microsoft.Xna.Framework.Input.Keys.Delete))
 					RemoveObjectFromPlane();
+
             foreach (InterfaceObject io in mInterfaceObjects)
                 io.Update();
 
@@ -172,6 +172,7 @@ namespace MenuEditor.GameContent.Scenes
 			DrawCollectables();
 			DrawItems();
 			DrawLights();
+			DrawGhostEntity();
 
 			switch(GameLogic.EState)
 			{
@@ -238,20 +239,13 @@ namespace MenuEditor.GameContent.Scenes
 
 		public void DrawPlanes()
 		{
+			mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
+			foreach (GameObject go in mlevelSceneData.BackgroundSprites)
+				go.Draw(mSpriteBatch);
+            mSpriteBatch.End();
 
-			for (int i = 4; i >= 0; i-- )
-			{
-				if(mPlaneVisible[i])
-				{
-					mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
-                    foreach (GameObject go in mlevelSceneData.ParallaxPlanes[i].Tiles)
-                        go.Draw(mSpriteBatch);
-                    mSpriteBatch.End();
-				}
-
-				if (GameLogic.ParallaxLayerNow == i)
-					DrawGhostEntity();
-			}
+			//if (GameLogic.ParallaxLayerNow == i)
+			//		DrawGhostEntity();
 		}
 
 		private void DrawMoveRectangle()
@@ -311,12 +305,14 @@ namespace MenuEditor.GameContent.Scenes
 
 			if(MouseHelper.Instance.IsClickedRight)
 			{
+				Point mousePosition = new Point(MouseHelper.PositionPoint.X - (int)mCamera.Position.X, MouseHelper.PositionPoint.Y - (int)mCamera.Position.Y);
+
 				switch(GameLogic.EState)
 				{
 					case EditorState.PlaceWayPoint:
 						foreach(Waypoint w in mlevelSceneData.Waypoints)
 						{
-							if(w.CollisionBox.Contains(MouseHelper.PositionPoint.X - (int)mCamera.Position.X, MouseHelper.PositionPoint.Y - (int)mCamera.Position.Y))
+							if(w.CollisionBox.Contains(mousePosition))
 								w.ShowDropDown(MouseHelper.Position);
 						}
 						break;
@@ -520,29 +516,19 @@ namespace MenuEditor.GameContent.Scenes
 		{
 			Sprite s = new Sprite(Vector2.Zero, GameLogic.GhostData.Name);
 			s.Position = MouseHelper.Position - new Vector2(s.Texture.Width / 2, s.Texture.Height / 2) - mCamera.Position;
+			s.DrawZ = s.PositionY + s.Texture.Height;
 			PlaceElementInPlane(s);
 		}
 
 		private void PlaceCollectable()
 		{
-			if (GameLogic.GhostData.Name.Contains("Artefact"))
-			{
-				Artefact a = new Artefact(Vector2.Zero, GameLogic.GhostData.Name);
-				a.Position = MouseHelper.Position - new Vector2(a.Texture.Width / 2, a.Texture.Height / 2) - mCamera.Position;
-				mlevelSceneData.Collectables.Add(a);
-			}
-			else if (GameLogic.GhostData.Name.Contains("Diary"))
-			{
-				DiaryEntry d = new DiaryEntry(Vector2.Zero, GameLogic.GhostData.Name);
-				d.Position = MouseHelper.Position - new Vector2(d.Texture.Width / 2, d.Texture.Height / 2) - mCamera.Position;
-				mlevelSceneData.Collectables.Add(d);
-			}
-			else if (GameLogic.GhostData.Name.Contains("Toy"))
-			{
-				Toy t = new Toy(Vector2.Zero, GameLogic.GhostData.Name);
-				t.Position = MouseHelper.Position - new Vector2(t.Texture.Width / 2, t.Texture.Height / 2) - mCamera.Position;
-				mlevelSceneData.Collectables.Add(t);
-			}
+			Collectable c = new Collectable(Vector2.Zero, GameLogic.GhostData.Name);
+			c.Position = MouseHelper.Position - new Vector2(c.Texture.Width / 2, c.Texture.Height / 2) - mCamera.Position;
+			string test = GameLogic.GhostData.Name.Substring(GameLogic.GhostData.Name.Length - 1);
+			c.CollectableId = Convert.ToInt32(test);
+			c.ShowTextureName = "ShowCollectable" + c.CollectableId;
+			c.DrawZ = c.PositionY + c.Texture.Height;
+			mlevelSceneData.Collectables.Add(c);
 		}
 
 		private void PlaceItem()
@@ -551,30 +537,35 @@ namespace MenuEditor.GameContent.Scenes
 			{
 				Branch a = new Branch(Vector2.Zero, GameLogic.GhostData.Name);
 				a.Position = MouseHelper.Position - new Vector2(a.Texture.Width / 2, a.Texture.Height / 2) - mCamera.Position;
+				a.DrawZ = a.PositionY + a.Texture.Height;
 				mlevelSceneData.Items.Add(a);
 			}
 			else if (GameLogic.GhostData.Name.Contains("Knife"))
 			{
 				Knife d = new Knife(Vector2.Zero, GameLogic.GhostData.Name);
 				d.Position = MouseHelper.Position - new Vector2(d.Texture.Width / 2, d.Texture.Height / 2) - mCamera.Position;
+				d.DrawZ = d.PositionY + d.Texture.Height;
 				mlevelSceneData.Items.Add(d);
 			}
 			else if (GameLogic.GhostData.Name.Contains("Key"))
 			{
 				Key t = new Key(Vector2.Zero, GameLogic.GhostData.Name);
 				t.Position = MouseHelper.Position - new Vector2(t.Texture.Width / 2, t.Texture.Height / 2) - mCamera.Position;
+				t.DrawZ = t.PositionY + t.Texture.Height;
 				mlevelSceneData.Items.Add(t);
 			}
 			else if (GameLogic.GhostData.Name.Contains("Lantern"))
 			{
 				Lantern a = new Lantern(Vector2.Zero, GameLogic.GhostData.Name);
 				a.Position = MouseHelper.Position - new Vector2(a.Texture.Width / 2, a.Texture.Height / 2) - mCamera.Position;
+				a.DrawZ = a.PositionY + a.Texture.Height;
 				mlevelSceneData.Items.Add(a);
 			}
 			else if (GameLogic.GhostData.Name.Contains("Matches"))
 			{
 				Matches d = new Matches(Vector2.Zero, GameLogic.GhostData.Name);
 				d.Position = MouseHelper.Position - new Vector2(d.Texture.Width / 2, d.Texture.Height / 2) - mCamera.Position;
+				d.DrawZ = d.PositionY + d.Texture.Height;
 				mlevelSceneData.Items.Add(d);
 			}
 		}
@@ -640,7 +631,7 @@ namespace MenuEditor.GameContent.Scenes
 			switch(GameLogic.EState)
 			{
                 case EditorState.Standard:
-                    foreach(GameObject go in mlevelSceneData.ParallaxPlanes[GameLogic.ParallaxLayerNow].Tiles)
+                    foreach(GameObject go in mlevelSceneData.BackgroundSprites)
                         if (go.CollisionBox.Contains(MousePosition))
                         {
 							changeEntity = ChangeSelectedEntity(go);
@@ -693,6 +684,21 @@ namespace MenuEditor.GameContent.Scenes
 			return true;
 		}
 
+		private void SortBackgroundPlane()
+		{
+			for (int j = mlevelSceneData.BackgroundSprites.Count - 2; j > 0 ; j--)
+				for (int i = 0; i < mlevelSceneData.BackgroundSprites.Count - 1; i++)
+				{
+					if (mlevelSceneData.BackgroundSprites[i].DrawZ > mlevelSceneData.BackgroundSprites[i + 1].DrawZ)
+					{
+						GameObject temp = mlevelSceneData.BackgroundSprites[i];
+						mlevelSceneData.BackgroundSprites[i] = mlevelSceneData.BackgroundSprites[i + 1];
+						mlevelSceneData.BackgroundSprites[i + 1] = temp;
+					}
+				}
+
+		}
+
         private void RemoveObjectFromPlane()
         {
 			if (GameLogic.SelectedEntity.GetType() == typeof(Waypoint))
@@ -702,10 +708,11 @@ namespace MenuEditor.GameContent.Scenes
 				|| GameLogic.SelectedEntity.GetType() == typeof(SpotLight))
 				mlevelSceneData.Lights.Remove((Light)GameLogic.SelectedEntity);
 			else
-				mlevelSceneData.ParallaxPlanes[GameLogic.ParallaxLayerNow].Tiles.Remove(GameLogic.SelectedEntity);
+				mlevelSceneData.BackgroundSprites.Remove(GameLogic.SelectedEntity);
             GameLogic.SelectEntityRectangle.IsSelected = false;
             GameLogic.SelectedEntity = null;
             GameLogic.GhostData.Name = "";
+
 			if(GameLogic.EState != EditorState.PlaceWayPoint)
 				GameLogic.EState = EditorState.Standard;
         }
@@ -716,9 +723,10 @@ namespace MenuEditor.GameContent.Scenes
 		/// <param name="go"></param>
 		private void PlaceElementInPlane(GameObject go)
 		{
-			mlevelSceneData.ParallaxPlanes[GameLogic.ParallaxLayerNow].Tiles.Add(go);
+			mlevelSceneData.BackgroundSprites.Add(go);
             GameLogic.SelectedEntity = go;
             GameLogic.SelectEntityRectangle = new SelectRectangle(go.Position, go.CollisionBox);
+			SortBackgroundPlane();
 		}
 
         private void MoveCameraByMouse()
@@ -753,6 +761,9 @@ namespace MenuEditor.GameContent.Scenes
 
 		private void SaveScene()
 		{
+			// Damit beim Klicken nicht ausversehn ein Rectangle gezogen wird.
+			GameLogic.EState = EditorState.Standard;
+
 			Stream myStream;
 			SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
@@ -778,6 +789,9 @@ namespace MenuEditor.GameContent.Scenes
 
 		public void LoadScene()
 		{
+			// Damit beim Klicken nicht ausversehn ein Rectangle gezogen wird.
+			GameLogic.EState = EditorState.Standard;
+
 			mlevelSceneData.ResetLevel();
 			Stream myStream;
 			OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -797,12 +811,6 @@ namespace MenuEditor.GameContent.Scenes
 					mlevelSceneData = (SceneData)xml.Deserialize(myStream);
 					reader.Close();
 					myStream.Close();
-
-                    //// Ersten 5 Listen löschen wichtig!!!
-                    //for(int i = 0; i < 5; i++)
-                    //{
-                    //    mlevelSceneData.ParallaxPlanes.RemoveAt(0);
-                    //}
 				}
 			LoadAllTexturesInPlanes();
 			LoadTextures();
@@ -847,8 +855,8 @@ namespace MenuEditor.GameContent.Scenes
 				if (go.ObjectId > pHighestId)
 					pHighestId = go.ObjectId;
 
-			for (int i = 0; i < mlevelSceneData.ParallaxPlanes.Length; i++)
-				foreach (GameObject go in mlevelSceneData.ParallaxPlanes[i].Tiles)
+			for (int i = 0; i < mlevelSceneData.BackgroundSprites.Count; i++)
+				foreach (GameObject go in mlevelSceneData.BackgroundSprites)
 					if (go.ObjectId > pHighestId)
 						pHighestId = go.ObjectId;
 
@@ -860,7 +868,7 @@ namespace MenuEditor.GameContent.Scenes
 		{
 			for (int i = 4; i >= 0; i-- )
 			{
-				foreach (GameObject go in mlevelSceneData.ParallaxPlanes[i].Tiles)
+				foreach (GameObject go in mlevelSceneData.BackgroundSprites)
 				{
 					if (go.GetType() == typeof(Sprite))
 					{
