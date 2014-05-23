@@ -97,6 +97,7 @@ namespace MenuEditor.GameContent.Scenes
 			mlevelSceneData.Initialize();
 			mlevelSceneData.GamePlane = mCamera.GameScreen;
 			mClearColor = Color.Red;
+			GameLogic.ZDepth = mlevelSceneData.GamePlane.Height;
 
             mMouseCenter = Vector2.Zero;
 			GameLogic.EState = EditorState.Standard;
@@ -119,8 +120,8 @@ namespace MenuEditor.GameContent.Scenes
 				new List<string>() { "Neu...", "Laden", "Speichern unter...", "DebugMode" }, 
 				new List<Action>() { ShowFormNewGame, LoadScene, SaveScene, SetDebugMode });
 			DropDownMenu Ebenen = new DropDownMenu(Vector2.Zero, 
-				new List<string>() { "Alle Ebenen anzeigen", "Ebene 1", "Ebene 2", "Ebene 3", "Ebene 4", "Ebene 5", "Wegsetzding(PathStuff)" }, 
-				new List<Action>() { SetAllPlanesVisible, SetPlane0Visible, SetPlane1Visible, SetPlane2Visible, SetPlane3Visible, SetPlane4Visible, SetMoveRectangleState });
+				new List<string>() { "Alle Ebenen anzeigen", "Wegsetzding(PathStuff)" }, 
+				new List<Action>() { SetAllPlanesVisible, SetMoveRectangleState });
 
 			MenuBar mMenuBarTop = new MenuBar(Vector2.Zero);
             mMenuBarTop.AddMenueItem("Datei", Main);
@@ -201,7 +202,7 @@ namespace MenuEditor.GameContent.Scenes
 				io.Draw(mSpriteBatch);
 
             Vector2 msPos = MouseHelper.Position - mCamera.Position;
-            mSpriteBatch.DrawString(mDebugFont, "MousePosition: " + msPos, new Vector2(0, 20), Color.White);
+			mSpriteBatch.DrawString(mDebugFont, "MousePosition: " + msPos, new Vector2(0, 20), Color.White);
 			mSpriteBatch.DrawString(mDebugFont, "Rectangle Position: " + tmpRectangle, new Vector2(0, 40), Color.White);
             mRightClickDropDown.Draw(mSpriteBatch);
             
@@ -219,10 +220,10 @@ namespace MenuEditor.GameContent.Scenes
 				w.Draw(mSpriteBatch);
 			mSpriteBatch.End();
 
-			//mSpriteBatch.Begin();
-			//foreach (Waypoint w in mlevelSceneData.Waypoints)
-			//	w.DropDown.Draw(mSpriteBatch);
-			//mSpriteBatch.End();
+			mSpriteBatch.Begin();
+			foreach (Waypoint w in mlevelSceneData.Waypoints)
+				w.DropDown.Draw(mSpriteBatch);
+			mSpriteBatch.End();
 		}
 
 		private void DrawGhostEntity()
@@ -241,11 +242,16 @@ namespace MenuEditor.GameContent.Scenes
 		{
 			mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
 			foreach (GameObject go in mlevelSceneData.BackgroundSprites)
-				go.Draw(mSpriteBatch);
+				if(go.DrawZ < GameLogic.ZDepth)
+					go.Draw(mSpriteBatch);
+
+			foreach (InteractiveObject io in mlevelSceneData.InteractiveObjects)
+				if (io.DrawZ < GameLogic.ZDepth)
+					io.Draw(mSpriteBatch);
+
+			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(0, GameLogic.ZDepth, mlevelSceneData.GamePlane.Width, 1), Color.Blue);
             mSpriteBatch.End();
 
-			//if (GameLogic.ParallaxLayerNow == i)
-			//		DrawGhostEntity();
 		}
 
 		private void DrawMoveRectangle()
@@ -263,7 +269,14 @@ namespace MenuEditor.GameContent.Scenes
             if (GameLogic.SelectEntityRectangle.IsSelected)
             {
                 mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
-                GameLogic.SelectEntityRectangle.Draw(mSpriteBatch);
+				GameLogic.SelectEntityRectangle.Draw(mSpriteBatch);
+				if(GameLogic.SelectedEntity != null)
+					mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"),
+						new Rectangle(GameLogic.SelectedEntity.CollisionBox.X,
+							GameLogic.SelectedEntity.DrawZ,
+							GameLogic.SelectedEntity.CollisionBox.Width,
+							1),
+							Color.Black);
                 mSpriteBatch.End();
             }
         }
@@ -335,10 +348,26 @@ namespace MenuEditor.GameContent.Scenes
 			
 			if (GameLogic.EState != EditorState.PlaceMoveArea)
 			{
-				if (MouseHelper.Instance.IsWheelUp)
-					GameLogic.ParallaxLayerNow++;
-				if (MouseHelper.Instance.IsWheelDown)
-					GameLogic.ParallaxLayerNow--;
+				if (GameLogic.SelectedEntity == null)
+				{
+					if (MouseHelper.Instance.IsWheelUp)
+						GameLogic.ZDepth--;
+					if (MouseHelper.Instance.IsWheelDown)
+						GameLogic.ZDepth++;
+				}
+				else
+				{
+					if (MouseHelper.Instance.IsWheelUp)
+					{
+						GameLogic.SelectedEntity.DrawZ--;
+						SortBackgroundPlane();
+					}
+					if (MouseHelper.Instance.IsWheelDown)
+					{
+						GameLogic.SelectedEntity.DrawZ++;
+						SortBackgroundPlane();
+					}
+				}
 			}
 
 
@@ -509,7 +538,7 @@ namespace MenuEditor.GameContent.Scenes
 
             ioNew.Position = MouseHelper.Position - new Vector2(ioNew.Texture.Width / 2, ioNew.Texture.Height / 2) - mCamera.Position;
 
-			PlaceElementInPlane(ioNew);
+			mlevelSceneData.InteractiveObjects.Add(ioNew);
 		}
 
 		private void PlaceSprite()
@@ -572,7 +601,7 @@ namespace MenuEditor.GameContent.Scenes
 
 		private void PlaceLight()
 		{
-			float depth = 1 / GameLogic.ParallaxLayerNow + 1;
+			float depth = 1 / GameLogic.ZDepth + 1;
 			// 32x32 da Texture 64x64 Groß ist und um den Origin verschoben wird.
 			Vector2 mousePosition = MouseHelper.Position - new Vector2(32,32) - mCamera.Position;
 
@@ -613,6 +642,7 @@ namespace MenuEditor.GameContent.Scenes
 
 			Light l = mlevelSceneData.Lights[foundBy];
 			l.Range = Vector2.Distance(l.Position,(new Vector2(MouseHelper.Position.X - (int)mCamera.Position.X, MouseHelper.Position.Y - (int)mCamera.Position.Y) - new Vector2(32,32)));
+			l.SetDrawCircle();
 			if (MouseHelper.Instance.IsClickedLeft)
 			{
 				l.CollisionBox = new Rectangle(l.PositionX, l.PositionY, 64, 64);
@@ -632,27 +662,34 @@ namespace MenuEditor.GameContent.Scenes
 			{
                 case EditorState.Standard:
                     foreach(GameObject go in mlevelSceneData.BackgroundSprites)
-                        if (go.CollisionBox.Contains(MousePosition))
+                        if (go.CollisionBox.Contains(MousePosition) && (GameLogic.ZDepth > go.DrawZ))
                         {
 							changeEntity = ChangeSelectedEntity(go);
                             return;
                         }
+
+					foreach(InteractiveObject io in mlevelSceneData.InteractiveObjects)
+						if (io.CollisionBox.Contains(MousePosition) && (GameLogic.ZDepth > io.DrawZ))
+						{
+							changeEntity = ChangeSelectedEntity(io);
+						}
+
 					foreach(Collectable c in mlevelSceneData.Collectables)
-						if(c.CollisionBox.Contains(MousePosition))
+						if (c.CollisionBox.Contains(MousePosition) && (GameLogic.ZDepth > c.DrawZ))
 						{
 							changeEntity = ChangeSelectedEntity(c);
 							return;
 						}
 
 					foreach(Item i in mlevelSceneData.Items)
-						if(i.CollisionBox.Contains(MousePosition))
+						if (i.CollisionBox.Contains(MousePosition) && (GameLogic.ZDepth > i.DrawZ))
 						{
 							changeEntity = ChangeSelectedEntity(i);
 							return;
 						}
 
 					foreach (Light l in mlevelSceneData.Lights)
-						if (l.CollisionBox.Contains(MousePosition))
+						if (l.CollisionBox.Contains(MousePosition) && (GameLogic.ZDepth > l.DrawZ))
 						{
 							changeEntity = ChangeSelectedEntity(l);
 							return;
@@ -686,7 +723,7 @@ namespace MenuEditor.GameContent.Scenes
 
 		private void SortBackgroundPlane()
 		{
-			for (int j = mlevelSceneData.BackgroundSprites.Count - 2; j > 0 ; j--)
+			for (int j = mlevelSceneData.BackgroundSprites.Count - 1; j > 0 ; j--)
 				for (int i = 0; i < mlevelSceneData.BackgroundSprites.Count - 1; i++)
 				{
 					if (mlevelSceneData.BackgroundSprites[i].DrawZ > mlevelSceneData.BackgroundSprites[i + 1].DrawZ)
@@ -703,13 +740,29 @@ namespace MenuEditor.GameContent.Scenes
         {
 			if (GameLogic.SelectedEntity.GetType() == typeof(Waypoint))
 				mlevelSceneData.Waypoints.Remove((Waypoint)GameLogic.SelectedEntity);
+
 			else if (GameLogic.SelectedEntity.GetType() == typeof(DirectionLight)
 				|| GameLogic.SelectedEntity.GetType() == typeof(PointLight)
 				|| GameLogic.SelectedEntity.GetType() == typeof(SpotLight))
 				mlevelSceneData.Lights.Remove((Light)GameLogic.SelectedEntity);
+
+			else if (GameLogic.SelectedEntity.GetType() == typeof(InteractiveObject))
+				mlevelSceneData.InteractiveObjects.Remove((InteractiveObject)GameLogic.SelectedEntity);
+
+			else if (GameLogic.SelectedEntity.GetType() == typeof(Collectable))
+				mlevelSceneData.Collectables.Remove((Collectable)GameLogic.SelectedEntity);
+
+			else if (GameLogic.SelectedEntity.GetType() == typeof(Branch)
+				|| GameLogic.SelectedEntity.GetType() == typeof(Key)
+				|| GameLogic.SelectedEntity.GetType() == typeof(Knife)
+				|| GameLogic.SelectedEntity.GetType() == typeof(Lantern)
+				|| GameLogic.SelectedEntity.GetType() == typeof(Matches))
+				mlevelSceneData.Items.Remove((Item)GameLogic.SelectedEntity);
+
 			else
 				mlevelSceneData.BackgroundSprites.Remove(GameLogic.SelectedEntity);
-            GameLogic.SelectEntityRectangle.IsSelected = false;
+            
+			GameLogic.SelectEntityRectangle.IsSelected = false;
             GameLogic.SelectedEntity = null;
             GameLogic.GhostData.Name = "";
 
@@ -826,6 +879,7 @@ namespace MenuEditor.GameContent.Scenes
             mCamera.GameScreen = pGameScreenSize;
 			mlevelSceneData.ResetLevel();
 			mlevelSceneData.GamePlane = pGameScreenSize;
+			GameLogic.ZDepth = mlevelSceneData.GamePlane.Height;
 			BaseObject.mIdAll = 0;
 		}
 
@@ -866,21 +920,18 @@ namespace MenuEditor.GameContent.Scenes
 		// Muss Ingame auch getätigt werden.
 		private void LoadAllTexturesInPlanes()
 		{
-			for (int i = 4; i >= 0; i-- )
+			foreach (GameObject go in mlevelSceneData.BackgroundSprites)
 			{
-				foreach (GameObject go in mlevelSceneData.BackgroundSprites)
+				if (go.GetType() == typeof(Sprite))
 				{
-					if (go.GetType() == typeof(Sprite))
-					{
-						Sprite s = (Sprite)go;
-						s.Texture = TextureManager.Instance.GetElementByString(s.TextureName);
-					}
-					if (go.GetType() == typeof(InteractiveObject))
-					{
-						InteractiveObject io = (InteractiveObject)go;
-						io.Texture = TextureManager.Instance.GetElementByString(io.TextureName);
-					}
+					Sprite s = (Sprite)go;
+					s.Texture = TextureManager.Instance.GetElementByString(s.TextureName);
 				}
+			}
+
+			foreach(InteractiveObject io in mlevelSceneData.InteractiveObjects)
+			{
+				io.Texture = TextureManager.Instance.GetElementByString(io.TextureName);
 			}
 		}
 
@@ -898,35 +949,10 @@ namespace MenuEditor.GameContent.Scenes
 		#region PlaneDropDownMenu
 		private void SetAllPlanesVisible()
 		{
-			for (int i = 0; i < mPlaneVisible.Length; i++)
-				mPlaneVisible[i] = true;
+			GameLogic.ZDepth = mlevelSceneData.GamePlane.Height;
 			MouseHelper.ResetClick();
 		}
-		private void SetPlane0Visible()
-		{
-			mPlaneVisible[0] = !mPlaneVisible[0];
-			MouseHelper.ResetClick();
-		}
-		private void SetPlane1Visible()
-		{
-			mPlaneVisible[1] = !mPlaneVisible[1];
-			MouseHelper.ResetClick();
-		}
-		private void SetPlane2Visible()
-		{
-			mPlaneVisible[2] = !mPlaneVisible[2];
-			MouseHelper.ResetClick();
-		}
-		private void SetPlane3Visible()
-		{
-			mPlaneVisible[3] = !mPlaneVisible[3];
-			MouseHelper.ResetClick();
-		}
-		private void SetPlane4Visible()
-		{
-			mPlaneVisible[4] = !mPlaneVisible[4];
-			MouseHelper.ResetClick();
-		}
+
 		private void SetMoveRectangleState()
 		{
 			GameLogic.EState = EditorState.PlaceMoveArea;

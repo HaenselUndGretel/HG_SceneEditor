@@ -13,18 +13,13 @@ namespace MenuEditor.GameContent
 
         private static int mParalllaxNow = 1;
 
-        public static int ParallaxLayerNow
+        public static int ZDepth
         {
             get { return mParalllaxNow; }
             set
             {
-                if (value == -1)
-                    value = 0;
-                else if (value == 5)
-                    value = 4;
-
-                GameLogic.SelectEntityRectangle.IsSelected = false;
-                GameLogic.SelectedEntity = null;
+                if (value <= -101)
+                    value = -100;
                 mParalllaxNow = value;
             }
         }

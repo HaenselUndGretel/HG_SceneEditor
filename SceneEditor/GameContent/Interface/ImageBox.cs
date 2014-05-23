@@ -31,11 +31,11 @@ namespace MenuEditor.GameContent.Interface
             Position = pPosition;
 
             // Many Magic Numbers !!!
-            Top = new Rectangle(0, 0, pRectangleSize.Width - 2, 1);
-            Bottom = new Rectangle(0, pRectangleSize.Height - 2, pRectangleSize.Width - 1, 1);
-            Left = new Rectangle(0, 0, 1, pRectangleSize.Height - 2);
-            Right = new Rectangle(pRectangleSize.Width - 2, 0, 1, pRectangleSize.Height - 2);
-            Select = new Rectangle(1, 1, pRectangleSize.Width - 3, pRectangleSize.Height - 3);
+            Top = new Rectangle(-1, -1, pRectangleSize.Width + 2, 1);
+            Bottom = new Rectangle(-1, pRectangleSize.Height , pRectangleSize.Width + 2, 1);
+            Left = new Rectangle(-1, -1, 1, pRectangleSize.Height + 1);
+            Right = new Rectangle(pRectangleSize.Width, -1, 1, pRectangleSize.Height + 1);
+            Select = new Rectangle(0, 0, pRectangleSize.Width, pRectangleSize.Height);
 
             IsSelected = true;
             mTexture = TextureManager.Instance.GetElementByString("pixel");
@@ -76,7 +76,7 @@ namespace MenuEditor.GameContent.Interface
             : base(pPosition, pSize)
         {
 			mCollisionBox = pSize;
-			SelectRectangleObject = new SelectRectangle(Position, new Rectangle(0, 0, Thumbnail.THUMBNAIL_WIDTH + 2, Thumbnail.THUMBNAIL_HEIGHT + 2));
+			SelectRectangleObject = new SelectRectangle(Position, new Rectangle(0, 0, Thumbnail.THUMBNAIL_WIDTH, Thumbnail.THUMBNAIL_HEIGHT));
             SortEntitesOnScreen(Vector2.Zero);
             SelectRectangleObject.IsSelected = false;
 

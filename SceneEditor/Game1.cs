@@ -33,6 +33,9 @@ namespace SceneEditor
 			//EngineSettings.SetDisplayResolution(1980,740);
 			//EngineSettings.SetResolution(1280 + 1280, 740);
 
+			//EngineSettings.SetDisplayResolution(1280, 720);
+			//EngineSettings.SetResolution(1440 + 1280, 740);
+
             this.IsMouseVisible = true;
         }
 

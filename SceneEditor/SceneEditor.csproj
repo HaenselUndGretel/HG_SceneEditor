@@ -99,10 +99,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\HG_Data\HG_Data.csproj">
-      <Project>{21bdae00-db31-4a09-8e55-be172db224ce}</Project>
-      <Name>HG_Data</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\KryptonEngine\KryptonEngine.csproj">
       <Project>{4beca7bb-c7c4-401e-a263-49b8bbba2cae}</Project>
       <Name>KryptonEngine</Name>
