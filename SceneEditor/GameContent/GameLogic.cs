@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using HanselAndGretel.Data;
+using Microsoft.Xna.Framework;
 using SceneEditor.GameContent;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,10 @@ namespace MenuEditor.GameContent
         public static MenuEditor.GameContent.Interface.SelectRectangle SelectEntityRectangle;
         public static KryptonEngine.Entities.GameObject SelectedEntity; 
 		public static EditorState EState;
+		public static SceneData LevelSceneData;
+		public static bool IsXmlFormShow;
+
+		public static bool XmlFormFocus = false;
         #endregion
     }
 }

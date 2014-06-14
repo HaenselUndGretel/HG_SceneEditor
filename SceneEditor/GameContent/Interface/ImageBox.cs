@@ -79,7 +79,6 @@ namespace MenuEditor.GameContent.Interface
 			SelectRectangleObject = new SelectRectangle(Position, new Rectangle(0, 0, Thumbnail.THUMBNAIL_WIDTH, Thumbnail.THUMBNAIL_HEIGHT));
             SortEntitesOnScreen(Vector2.Zero);
             SelectRectangleObject.IsSelected = false;
-
         }
         #endregion
 
@@ -108,6 +107,10 @@ namespace MenuEditor.GameContent.Interface
 						GameLogic.GhostData = d;
 						if (d.Name == "IconMoveArea")
 							GameLogic.EState = EditorState.PlaceWayPoint;
+						else if (d.Name == "IconEventArea")
+							GameLogic.EState = EditorState.PlaceEventArea;
+						else if (d.Name.Contains("Enemy"))
+							GameLogic.EState = EditorState.PlaceEnemy;
 						else if (d.Name.Contains("Collectable"))
 							GameLogic.EState = EditorState.PlaceCollectable;
 						else if (d.Name.Contains("Item"))
@@ -116,6 +119,9 @@ namespace MenuEditor.GameContent.Interface
 							GameLogic.EState = EditorState.PlaceLight;
 						else if (InteractiveObjectDataManager.Instance.HasElement(d.Name))
 							GameLogic.EState = EditorState.PlaceInteractiveObject;
+						else if (d.Name.Contains("Ground"))
+							GameLogic.EState = EditorState.PlaceGround;
+
 						else
 							GameLogic.EState = EditorState.PlaceSprites;
 						break;
@@ -139,7 +145,7 @@ namespace MenuEditor.GameContent.Interface
         {
             mEntity.Clear();
 
-			Dictionary<string, Texture2D> Resourcen = TextureManager.Instance.GetAllGameEntities();
+			Dictionary<string, Texture2D> Resourcen = TextureManager.Instance.GetAllEntetiesWithout(new List<string>() { "pixel", "Normal", "Depth" });
 			int posX = THUMBNAIL_PADDING;
 			int posY = THUMBNAIL_PADDING;
             int index = 0;

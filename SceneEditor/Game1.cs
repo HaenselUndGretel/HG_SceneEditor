@@ -13,6 +13,7 @@ using KryptonEngine.Manager;
 using MenuEditor.GameContent;
 #endregion
 
+
 namespace SceneEditor
 {
     /// <summary>
@@ -26,17 +27,17 @@ namespace SceneEditor
             EngineSettings.OnWindows = true;
             EngineSettings.IsDebug = false;
 
+			EngineSettings.SetDisplayResolution(1440 + 1280, 720);
+			EngineSettings.SetResolution(1440 + 1280, 740);
+#if DEBUG
 			EngineSettings.SetDisplayResolution(1280 + 1280, 740);
 			EngineSettings.SetResolution(1280 + 1280, 740);
-
+#endif
             // 1 Bildschirm
 			//EngineSettings.SetDisplayResolution(1980,740);
 			//EngineSettings.SetResolution(1280 + 1280, 740);
 
-			//EngineSettings.SetDisplayResolution(1280, 720);
-			//EngineSettings.SetResolution(1440 + 1280, 740);
-
-            this.IsMouseVisible = true;
+			this.IsMouseVisible = true;
         }
 
         /// <summary>

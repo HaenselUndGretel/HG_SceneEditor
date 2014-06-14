@@ -17,6 +17,8 @@ using System.Xml.Serialization;
 using HanselAndGretel.Data;
 using SceneEditor.GameContent;
 using Microsoft.Xna.Framework.Input;
+using KryptonEngine.HG_Data.Objects.Lights;
+using Xml_Editor;
 
 namespace MenuEditor.GameContent.Scenes
 {
@@ -26,27 +28,37 @@ namespace MenuEditor.GameContent.Scenes
 		Range
 	}
 
+	enum RenderState
+	{
+		Diffuse,
+		Normal,
+		Depth,
+		AO,
+		Light,
+		Final
+	}
+
     class EditorScene : Scene
     {
         #region Properties
-		protected SceneData mlevelSceneData;
-
-        /// <summary>
-        /// Hier sind Objekte für die Scene
-        /// </summary>
+		protected Sprite mGround;
 
         private List<InterfaceObject> mInterfaceObjects = new List<InterfaceObject>();
-        private DropDownMenu mRightClickDropDown;
 
 		private bool[] mPlaneVisible;
         private SpriteFont mDebugFont;
 
         private FormNewGame mFormNewGame;
+		private Form1 mXmlForm;
 
-        private InfoBox mObjectInfoBox;
         private ImageBox mObjectBox;
-        private Box mIconBox;
 
+		private Lighter mLighter;
+		private AmbientLight mAmbientLight;
+
+		private RenderTarget2D mRenderTargetFinalGame;
+
+		private bool somethingUpdated;
 
 		#region MoveArea
 		private bool IsDrawingRectangle;
@@ -58,6 +70,8 @@ namespace MenuEditor.GameContent.Scenes
 		#region LightSettings
 		LightState mLightState;
 		#endregion
+
+		RenderState mRenderState;
 
 		#region KeyboardInput
 
@@ -85,8 +99,8 @@ namespace MenuEditor.GameContent.Scenes
 			mCamera.GameScreen = new Rectangle(0, 0, 1280, 720);
 			mCamera.BoundSize = 200;
 			mCamera.MoveCamera(new Vector2(0, 20));
-			mlevelSceneData = new SceneData();
-			
+			GameLogic.LevelSceneData = new SceneData();
+			mXmlForm = new Form1();
         }
         #endregion
 
@@ -94,10 +108,10 @@ namespace MenuEditor.GameContent.Scenes
 
         public override void Initialize()
         {
-			mlevelSceneData.Initialize();
-			mlevelSceneData.GamePlane = mCamera.GameScreen;
+			GameLogic.LevelSceneData.Initialize();
+			GameLogic.LevelSceneData.GamePlane = mCamera.GameScreen;
 			mClearColor = Color.Red;
-			GameLogic.ZDepth = mlevelSceneData.GamePlane.Height;
+			GameLogic.ZDepth = GameLogic.LevelSceneData.GamePlane.Height;
 
             mMouseCenter = Vector2.Zero;
 			GameLogic.EState = EditorState.Standard;
@@ -107,25 +121,23 @@ namespace MenuEditor.GameContent.Scenes
 
         public override void LoadContent()
         {
-            // Images
-			mRightClickDropDown = new DropDownMenu(Vector2.Zero, new List<string>() { "" }, new List<Action>() { });
-
             /// Relevante Sachen für HUD 
 
-            mObjectBox = new ImageBox(new Vector2(EngineSettings.VirtualResWidth - 1440 - 1, 1), new Rectangle(0, 0, 1440 - 440, EngineSettings.VirtualResHeight - 2));
-            mObjectInfoBox = new InfoBox(new Vector2(EngineSettings.VirtualResWidth - 440 - 1, 1), new Rectangle(0, 0, 440, (EngineSettings.VirtualResHeight / 2) - 2));
-            mObjectInfoBox.BackgroundColor = Color.DarkGray;
-            mIconBox = new Box(new Vector2(EngineSettings.VirtualResWidth - 440, EngineSettings.VirtualResHeight / 2 + 1), new Rectangle(0, 0, 440, (EngineSettings.VirtualResHeight / 2) - 2));
+            mObjectBox = new ImageBox(new Vector2(EngineSettings.VirtualResWidth - 1440 - 1, 1), new Rectangle(0, 0, 1440, EngineSettings.VirtualResHeight - 2));
             DropDownMenu Main = new DropDownMenu(Vector2.Zero, 
-				new List<string>() { "Neu...", "Laden", "Speichern unter...", "DebugMode" }, 
-				new List<Action>() { ShowFormNewGame, LoadScene, SaveScene, SetDebugMode });
+				new List<string>() { "Neu...", "Laden", "Speichern unter...", "DebugMode", "Xml-Editor" }, 
+				new List<Action>() { ShowFormNewGame, LoadScene, SaveScene, SetDebugMode, ShowXmlEditor });
 			DropDownMenu Ebenen = new DropDownMenu(Vector2.Zero, 
 				new List<string>() { "Alle Ebenen anzeigen", "Wegsetzding(PathStuff)" }, 
 				new List<Action>() { SetAllPlanesVisible, SetMoveRectangleState });
+			DropDownMenu RenderTargets = new DropDownMenu(Vector2.Zero,
+				new List<String>() { "Diffuse Map", "Normal Map", "Depth Map", "AO Map", "Light Map", "Final Map" },
+				new List<Action>() { SetDiffuseRenderTarget, SetNormalRenderTarget, SetDepthRenderTarget, SetAORenderTarget, SetLightRenderTarget, SetFinalRenderTarget });
 
 			MenuBar mMenuBarTop = new MenuBar(Vector2.Zero);
             mMenuBarTop.AddMenueItem("Datei", Main);
             mMenuBarTop.AddMenueItem("Ebenen", Ebenen);
+			mMenuBarTop.AddMenueItem("Render Targets", RenderTargets);
             mMenuBarTop.OrganizeButtons();
 
             mFormNewGame = new FormNewGame();
@@ -134,10 +146,13 @@ namespace MenuEditor.GameContent.Scenes
 
             // Addet alle InterfaceObjekte in die InterfaceObject Liste
             mInterfaceObjects.Add(mMenuBarTop);
-            mInterfaceObjects.Add(mRightClickDropDown);
-			mInterfaceObjects.Add(mObjectInfoBox);
-            mInterfaceObjects.Add(mIconBox);
             mInterfaceObjects.Add(mObjectBox);
+
+			mAmbientLight = new AmbientLight();
+			mLighter = new Lighter(mAmbientLight);
+
+			mRenderState = RenderState.Final;
+			mRenderTargetFinalGame = new RenderTarget2D(EngineSettings.Graphics.GraphicsDevice, EngineSettings.VirtualResWidth, EngineSettings.VirtualResHeight);
 
             GameLogic.Initialize();
         }
@@ -147,46 +162,97 @@ namespace MenuEditor.GameContent.Scenes
             ksLast = ksCurrent;
             ksCurrent = Keyboard.GetState();
 
+			somethingUpdated = false;
+
+			if (GameLogic.XmlFormFocus) return;
+
             if (GameLogic.SelectedEntity != null
                 && ksLast.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Delete)
                 && ksCurrent.IsKeyUp(Microsoft.Xna.Framework.Input.Keys.Delete))
 					RemoveObjectFromPlane();
 
+			if (ksLast.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.OemMinus)
+				&& ksCurrent.IsKeyUp(Microsoft.Xna.Framework.Input.Keys.OemMinus))
+				mCamera.ZoomOut(2);
+
+			if (ksLast.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.OemPlus)
+				&& ksCurrent.IsKeyUp(Microsoft.Xna.Framework.Input.Keys.OemPlus))
+					mCamera.ResetScale();
+
             foreach (InterfaceObject io in mInterfaceObjects)
                 io.Update();
 
             UpdateMouseInput();
+
+			if (GameLogic.IsXmlFormShow && somethingUpdated)
+				mXmlForm.UpdateInfo();
         }
 
         public override void Draw()
         {
-            EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(mRenderTarget);
-            
+            EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(mRenderTargetDiffuse);
+			EngineSettings.Graphics.GraphicsDevice.Clear(Color.ForestGreen);
+
             DrawBackground();
 
-            mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null , mCamera.GetTranslationMatrix());
-            mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), mlevelSceneData.GamePlane, Color.SpringGreen);
+            mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, null , mCamera.GetTranslationMatrix());
+            mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), GameLogic.LevelSceneData.GamePlane, Color.ForestGreen);
             mSpriteBatch.End();
 
 			DrawPlanes();
 			DrawMoveRectangle();
+
 			DrawCollectables();
 			DrawItems();
 			DrawLights();
+
+			DrawNormalPlane();
+
+			DrawDepthPlane();
+
+			mLighter.GenerateLightMap(mRenderTargetLight, mRenderTargetNormal, mRenderTargetDepthObject, mRenderTargetAO, GameLogic.LevelSceneData.Lights);
+
+			mLighter.CombineMaps(mRenderTargetFinalGame, mRenderTargetLight, mRenderTargetDiffuse);
+
+			#region DrawFinalRendertargets
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(mRenderTargetFinal);
+			mSpriteBatch.Begin();
+			switch(mRenderState)
+			{
+				case RenderState.Diffuse: mSpriteBatch.Draw(mRenderTargetDiffuse, Vector2.Zero, Color.White);
+					break;
+				case RenderState.Depth: mSpriteBatch.Draw(mRenderTargetDepthObject, Vector2.Zero, Color.White);
+					break;
+				case RenderState.AO: mSpriteBatch.Draw(mRenderTargetAO, Vector2.Zero, Color.White);
+					break;
+				case RenderState.Final: mSpriteBatch.Draw(mRenderTargetFinalGame, Vector2.Zero, Color.White);
+					break;
+				case RenderState.Light: mSpriteBatch.Draw(mRenderTargetLight, Vector2.Zero, Color.White);
+					break;
+				case RenderState.Normal: mSpriteBatch.Draw(mRenderTargetNormal, Vector2.Zero, Color.White);
+					break;
+			}
+			mSpriteBatch.End();
+			
 			DrawGhostEntity();
 
-			switch(GameLogic.EState)
+			switch (GameLogic.EState)
 			{
 				case EditorState.PlaceWayPoint:
 					DrawWayPoints();
 					break;
+
+				case EditorState.PlaceEventArea:
+					DrawEventAreas();
+					break;
 			}
 
-            DrawSelectedRectangle();
+			DrawSelectedRectangle();
 
-            DrawMenueItems();
+			DrawMenueItems();
 
-            DrawOnScene();
+			#endregion
+			DrawOnScene();
         }
 
         #endregion
@@ -202,9 +268,9 @@ namespace MenuEditor.GameContent.Scenes
 				io.Draw(mSpriteBatch);
 
             Vector2 msPos = MouseHelper.Position - mCamera.Position;
-			mSpriteBatch.DrawString(mDebugFont, "MousePosition: " + msPos, new Vector2(0, 20), Color.White);
-			mSpriteBatch.DrawString(mDebugFont, "Rectangle Position: " + tmpRectangle, new Vector2(0, 40), Color.White);
-            mRightClickDropDown.Draw(mSpriteBatch);
+			if (GameLogic.SelectedEntity != null)
+				mSpriteBatch.DrawString(mDebugFont, "Object ID: " + GameLogic.SelectedEntity.ObjectId, new Vector2(0, 690), Color.White);
+			mSpriteBatch.DrawString(mDebugFont, "Mouseposition: " + CalculatePlacePositionOrigin(Vector2.Zero), new Vector2(0, 710), Color.White);
             
             // MouseMoveIcon
             if(mMouseCenter != Vector2.Zero)
@@ -215,14 +281,17 @@ namespace MenuEditor.GameContent.Scenes
 
 		private void DrawWayPoints()
 		{
-			mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
-			foreach (Waypoint w in mlevelSceneData.Waypoints)
+			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null, mCamera.GetTranslationMatrix());
+			foreach (Waypoint w in GameLogic.LevelSceneData.Waypoints)
 				w.Draw(mSpriteBatch);
 			mSpriteBatch.End();
+		}
 
-			mSpriteBatch.Begin();
-			foreach (Waypoint w in mlevelSceneData.Waypoints)
-				w.DropDown.Draw(mSpriteBatch);
+		private void DrawEventAreas()
+		{
+			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null, mCamera.GetTranslationMatrix());
+			foreach (EventTrigger e in GameLogic.LevelSceneData.Events)
+				e.Draw(mSpriteBatch);
 			mSpriteBatch.End();
 		}
 
@@ -240,35 +309,87 @@ namespace MenuEditor.GameContent.Scenes
 
 		public void DrawPlanes()
 		{
-			mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
-			foreach (GameObject go in mlevelSceneData.BackgroundSprites)
+			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null, mCamera.GetTranslationMatrix());
+			if (mGround != null)
+				mGround.Draw(mSpriteBatch);
+			
+			// Roter Kamera Rand
+			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(-200, -200, mCamera.GameScreen.Width + 600, 200), Color.Red);
+			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(-200, -200, 200, mCamera.GameScreen.Height + 400), Color.Red);
+			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(mCamera.GameScreen.Width, -200, 400, mCamera.GameScreen.Height + 400), Color.Red);
+			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(-200, mCamera.GameScreen.Height, mCamera.GameScreen.Width + 600, 200), Color.Red);
+
+			foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
 				if(go.DrawZ < GameLogic.ZDepth)
 					go.Draw(mSpriteBatch);
 
-			foreach (InteractiveObject io in mlevelSceneData.InteractiveObjects)
+			foreach (InteractiveObject io in GameLogic.LevelSceneData.InteractiveObjects)
 				if (io.DrawZ < GameLogic.ZDepth)
 					io.Draw(mSpriteBatch);
 
-			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(0, GameLogic.ZDepth, mlevelSceneData.GamePlane.Width, 1), Color.Blue);
-            mSpriteBatch.End();
+			mSpriteBatch.End();
 
+			DrawEnemy();
+
+			// Draw-Z Linie
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(mRenderTargetDiffuse);
+			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null, mCamera.GetTranslationMatrix());
+			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(0, GameLogic.ZDepth, GameLogic.LevelSceneData.GamePlane.Width, 1), Color.Blue);
+            mSpriteBatch.End();
+		}
+
+		private void DrawNormalPlane()
+		{
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(mRenderTargetNormal);
+			EngineSettings.Graphics.GraphicsDevice.Clear(new Color(129, 129, 255));
+
+			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null, mCamera.GetTranslationMatrix());
+			foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
+				if (go.DrawZ < GameLogic.ZDepth)
+					go.DrawNormal(mSpriteBatch);
+
+			foreach (InteractiveObject io in GameLogic.LevelSceneData.InteractiveObjects)
+				if (io.DrawZ < GameLogic.ZDepth)
+					io.DrawNormal(mSpriteBatch);
+
+			mSpriteBatch.End();
+		}
+
+		private void DrawDepthPlane()
+		{
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(mRenderTargetDepthObject);
+			EngineSettings.Graphics.GraphicsDevice.Clear(Color.White);
+
+			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null, mCamera.GetTranslationMatrix());
+			foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
+				if (go.DrawZ < GameLogic.ZDepth)
+					go.DrawDepth(mSpriteBatch);
+
+			foreach (InteractiveObject io in GameLogic.LevelSceneData.InteractiveObjects)
+				if (io.DrawZ < GameLogic.ZDepth)
+					io.DrawDepth(mSpriteBatch);
+			mSpriteBatch.End();
 		}
 
 		private void DrawMoveRectangle()
 		{
-			mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
+			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null, mCamera.GetTranslationMatrix());
 			if(IsDrawingRectangle)
 				mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), tmpRectangle, Color.White);
-			foreach (Rectangle r in mlevelSceneData.MoveArea)
+
+			foreach (Rectangle r in GameLogic.LevelSceneData.MoveArea)
 				mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), r, Color.DarkRed * 0.8f);
 			mSpriteBatch.End();
+
+			if (GameLogic.EState == EditorState.PlaceMoveArea)
+				DrawWayPoints();
 		}
 
         private void DrawSelectedRectangle()
         {
             if (GameLogic.SelectEntityRectangle.IsSelected)
             {
-                mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
+                mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, null, mCamera.GetTranslationMatrix());
 				GameLogic.SelectEntityRectangle.Draw(mSpriteBatch);
 				if(GameLogic.SelectedEntity != null)
 					mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"),
@@ -283,24 +404,32 @@ namespace MenuEditor.GameContent.Scenes
 
 		private void DrawCollectables()
 		{
-			mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
-			foreach (Collectable c in mlevelSceneData.Collectables)
+			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, null, mCamera.GetTranslationMatrix());
+			foreach (Collectable c in GameLogic.LevelSceneData.Collectables)
 				c.Draw(mSpriteBatch);
 			mSpriteBatch.End();
 		}
 
 		private void DrawItems()
 		{
-			mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
-			foreach (Item i in mlevelSceneData.Items)
+			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, null, mCamera.GetTranslationMatrix());
+			foreach (Item i in GameLogic.LevelSceneData.Items)
 				i.Draw(mSpriteBatch);
+			mSpriteBatch.End();
+		}
+
+		private void DrawEnemy()
+		{
+			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null, mCamera.GetTranslationMatrix());
+			foreach (Enemy e in GameLogic.LevelSceneData.Enemies)
+				e.Draw(mSpriteBatch);
 			mSpriteBatch.End();
 		}
 
 		private void DrawLights()
 		{
-			mSpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, mCamera.GetTranslationMatrix());
-			foreach (Light l in mlevelSceneData.Lights)
+			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, null, mCamera.GetTranslationMatrix());
+			foreach (Light l in GameLogic.LevelSceneData.Lights)
 				l.Draw(mSpriteBatch);
 			mSpriteBatch.End();
 		}
@@ -318,22 +447,20 @@ namespace MenuEditor.GameContent.Scenes
 
 			if(MouseHelper.Instance.IsClickedRight)
 			{
-				Point mousePosition = new Point(MouseHelper.PositionPoint.X - (int)mCamera.Position.X, MouseHelper.PositionPoint.Y - (int)mCamera.Position.Y);
+				if (mLightState == LightState.Range)
+					SetLightRange();
+				mLightState = LightState.Center;
 
 				switch(GameLogic.EState)
 				{
-					case EditorState.PlaceWayPoint:
-						foreach(Waypoint w in mlevelSceneData.Waypoints)
-						{
-							if(w.CollisionBox.Contains(mousePosition))
-								w.ShowDropDown(MouseHelper.Position);
-						}
-						break;
 					case EditorState.PlaceMoveArea:
-							UpdateRectangleDelete(mlevelSceneData.MoveArea);
+							UpdateRectangleDelete(GameLogic.LevelSceneData.MoveArea);
 							break;
 				}
 			}
+
+			//Update aller Objekte für DropDownMenu
+			UpdateAllDropDownEntities();
 
 			// Rechtsklick für DropDownMenu muss noch abgefangen werden.
             if (MouseHelper.Instance.IsClickedRight)
@@ -351,28 +478,26 @@ namespace MenuEditor.GameContent.Scenes
 				if (GameLogic.SelectedEntity == null)
 				{
 					if (MouseHelper.Instance.IsWheelUp)
-						GameLogic.ZDepth--;
+						GameLogic.ZDepth -= 25;
 					if (MouseHelper.Instance.IsWheelDown)
-						GameLogic.ZDepth++;
+						GameLogic.ZDepth += 25;
 				}
 				else
 				{
 					if (MouseHelper.Instance.IsWheelUp)
 					{
 						GameLogic.SelectedEntity.DrawZ--;
+						somethingUpdated = true;
 						SortBackgroundPlane();
 					}
 					if (MouseHelper.Instance.IsWheelDown)
 					{
 						GameLogic.SelectedEntity.DrawZ++;
+						somethingUpdated = true;
 						SortBackgroundPlane();
 					}
 				}
 			}
-
-
-			//Update aller Objekte für DropDownMenu
-			UpdateAllEntities();
 
 			// Zum selektieren der Objekte auf der Scene
 			if (MouseHelper.Instance.IsClickedLeft)
@@ -387,6 +512,10 @@ namespace MenuEditor.GameContent.Scenes
 				case EditorState.PlaceWayPoint:
 					UpdateRectInput();
 					break;
+
+				case EditorState.PlaceEventArea:
+					UpdateRectInput();
+					break;
 			}
         }
 
@@ -398,13 +527,12 @@ namespace MenuEditor.GameContent.Scenes
 					UpdateSelectedEntity();
 					break;
 
-				case EditorState.PlaceMoveArea:
-					UpdateRectInput();
-					break;
-
 				case EditorState.PlaceWayPoint:
 					UpdateSelectedEntity();
-					UpdateRectInput();
+					break;
+
+				case EditorState.PlaceEventArea:
+					UpdateSelectedEntity();
 					break;
 
 				case EditorState.PlaceInteractiveObject:
@@ -423,11 +551,19 @@ namespace MenuEditor.GameContent.Scenes
 					PlaceItem();
 					break;
 
+				case EditorState.PlaceEnemy:
+					PlaceEnemy();
+					break;
+
 				case EditorState.PlaceLight:
 					if (mLightState == LightState.Center)
 						PlaceLight();
 					else if (mLightState == LightState.Range)
 						SetLightRange();
+					break;
+
+				case EditorState.PlaceGround:
+					PlaceGround();
 					break;
 			}
 		}
@@ -454,17 +590,23 @@ namespace MenuEditor.GameContent.Scenes
 					switch(GameLogic.EState)
 					{
 						case EditorState.PlaceMoveArea:
-							mlevelSceneData.MoveArea.Add(tmpRectangle);
+							GameLogic.LevelSceneData.MoveArea.Add(tmpRectangle);
 							break;
 						case EditorState.PlaceWayPoint:
 							Waypoint w = new Waypoint();
 							w.CollisionBox = tmpRectangle;
-							w.Texture = GameLogic.GhostData.Texture.Texture;
 							w.Position = new Vector2(tmpRectangle.X, tmpRectangle.Y);
-							mlevelSceneData.Waypoints.Add(w);
+							GameLogic.LevelSceneData.Waypoints.Add(w);
+							break;
+						case EditorState.PlaceEventArea:
+							EventTrigger e = new EventTrigger();
+							e.CollisionBox = tmpRectangle;
+							e.Position = new Vector2(tmpRectangle.X, tmpRectangle.Y);
+							GameLogic.LevelSceneData.Events.Add(e);
 							break;
 					}
 				IsDrawingRectangle = false;
+				somethingUpdated = true;
 			}
 		}
 
@@ -475,7 +617,10 @@ namespace MenuEditor.GameContent.Scenes
 				if (go[i].CollisionBox.Contains(MouseHelper.PositionPoint))
 					delRect = i;
 			if (delRect != -1)
+			{
 				go.RemoveAt(delRect);
+				somethingUpdated = true;
+			}
 		}
 
 		private void UpdateRectangleDelete(List<Rectangle> r)
@@ -488,15 +633,30 @@ namespace MenuEditor.GameContent.Scenes
 			if (delRect != -1)
 				r.RemoveAt(delRect);
 			MouseHelper.ResetClick();
+			somethingUpdated = true;
 		}
 
-		private void UpdateAllEntities()
+		private void UpdateAllDropDownEntities()
 		{
-			foreach (Waypoint w in mlevelSceneData.Waypoints)
+			foreach (InteractiveObject io in GameLogic.LevelSceneData.InteractiveObjects)
+				io.Update();
+
+			foreach (Waypoint w in GameLogic.LevelSceneData.Waypoints)
 				w.Update();
 		}
 
 		#region Place Funktionen
+
+		private Vector2 CalculatePlacePositionOrigin(Sprite s)
+		{
+			return new Vector2((int)(MouseHelper.Position.X - s.Texture.Width / 2 - mCamera.Position.X), (int)(MouseHelper.Position.Y - s.Texture.Height / 2 - mCamera.Position.Y));
+		}
+
+		private Vector2 CalculatePlacePositionOrigin(Vector2 origin)
+		{
+			return new Vector2((int)(MouseHelper.Position.X - origin.X - mCamera.Position.X), (int)(MouseHelper.Position.Y - origin.Y - mCamera.Position.Y));
+		}
+
 		private void PlaceInteractiveObject()
 		{
 			InteractiveObject ioDefault = new InteractiveObject();
@@ -507,7 +667,7 @@ namespace MenuEditor.GameContent.Scenes
 
 			ioNew.Texture = ioDefault.Texture;
 			ioNew.TextureName = ioDefault.TextureName;
-            ioNew.Position = MouseHelper.Position - mCamera.Position;
+			ioNew.Position = new Vector2((int)(MouseHelper.Position.X - mCamera.Position.X), (int)(MouseHelper.Position.Y - mCamera.Position.Y));
             ioNew.CollisionBox = new Rectangle((int)ioNew.Position.X,(int) ioNew.Position.Y, ioNew.Texture.Width, ioNew.Texture.Height);
 
 			for (int i = 0; i < ioDefault.ActionRectList.Count; i++)
@@ -535,29 +695,43 @@ namespace MenuEditor.GameContent.Scenes
 
 			if (ioDefault.DrawZ != 0)
 				ioNew.DrawZ = ioDefault.DrawZ + ioNew.PositionY - ioNew.Texture.Height / 2;
+			else
+				ioNew.DrawZ = (int)ioNew.PositionY + ioNew.Texture.Height / 2;
 
             ioNew.Position = MouseHelper.Position - new Vector2(ioNew.Texture.Width / 2, ioNew.Texture.Height / 2) - mCamera.Position;
 
-			mlevelSceneData.InteractiveObjects.Add(ioNew);
+			GameLogic.LevelSceneData.InteractiveObjects.Add(ioNew);
+
+			GameLogic.SelectedEntity = ioNew;
+			GameLogic.SelectEntityRectangle = new SelectRectangle(ioNew.Position, ioNew.CollisionBox);
+			somethingUpdated = true;			
 		}
 
 		private void PlaceSprite()
 		{
 			Sprite s = new Sprite(Vector2.Zero, GameLogic.GhostData.Name);
-			s.Position = MouseHelper.Position - new Vector2(s.Texture.Width / 2, s.Texture.Height / 2) - mCamera.Position;
+			s.Position = CalculatePlacePositionOrigin(s);
 			s.DrawZ = s.PositionY + s.Texture.Height;
 			PlaceElementInPlane(s);
+			somethingUpdated = true;
+		}
+
+		private void PlaceGround()
+		{
+			mGround = new Sprite(Vector2.Zero, GameLogic.GhostData.Name);
+			mGround.Position = MouseHelper.Position - new Vector2(mGround.Texture.Width / 2, mGround.Texture.Height / 2) - mCamera.Position;
 		}
 
 		private void PlaceCollectable()
 		{
 			Collectable c = new Collectable(Vector2.Zero, GameLogic.GhostData.Name);
-			c.Position = MouseHelper.Position - new Vector2(c.Texture.Width / 2, c.Texture.Height / 2) - mCamera.Position;
+			c.Position = CalculatePlacePositionOrigin(c);
 			string test = GameLogic.GhostData.Name.Substring(GameLogic.GhostData.Name.Length - 1);
 			c.CollectableId = Convert.ToInt32(test);
 			c.ShowTextureName = "ShowCollectable" + c.CollectableId;
 			c.DrawZ = c.PositionY + c.Texture.Height;
-			mlevelSceneData.Collectables.Add(c);
+			GameLogic.LevelSceneData.Collectables.Add(c);
+			somethingUpdated = true;
 		}
 
 		private void PlaceItem()
@@ -565,84 +739,117 @@ namespace MenuEditor.GameContent.Scenes
 			if (GameLogic.GhostData.Name.Contains("Branch"))
 			{
 				Branch a = new Branch(Vector2.Zero, GameLogic.GhostData.Name);
-				a.Position = MouseHelper.Position - new Vector2(a.Texture.Width / 2, a.Texture.Height / 2) - mCamera.Position;
+				a.Position = CalculatePlacePositionOrigin(a);
 				a.DrawZ = a.PositionY + a.Texture.Height;
-				mlevelSceneData.Items.Add(a);
+				GameLogic.LevelSceneData.Items.Add(a);
 			}
 			else if (GameLogic.GhostData.Name.Contains("Knife"))
 			{
 				Knife d = new Knife(Vector2.Zero, GameLogic.GhostData.Name);
-				d.Position = MouseHelper.Position - new Vector2(d.Texture.Width / 2, d.Texture.Height / 2) - mCamera.Position;
+				d.Position = CalculatePlacePositionOrigin(d);
 				d.DrawZ = d.PositionY + d.Texture.Height;
-				mlevelSceneData.Items.Add(d);
+				GameLogic.LevelSceneData.Items.Add(d);
 			}
 			else if (GameLogic.GhostData.Name.Contains("Key"))
 			{
 				Key t = new Key(Vector2.Zero, GameLogic.GhostData.Name);
-				t.Position = MouseHelper.Position - new Vector2(t.Texture.Width / 2, t.Texture.Height / 2) - mCamera.Position;
+				t.Position = CalculatePlacePositionOrigin(t);
 				t.DrawZ = t.PositionY + t.Texture.Height;
-				mlevelSceneData.Items.Add(t);
+				GameLogic.LevelSceneData.Items.Add(t);
 			}
 			else if (GameLogic.GhostData.Name.Contains("Lantern"))
 			{
 				Lantern a = new Lantern(Vector2.Zero, GameLogic.GhostData.Name);
-				a.Position = MouseHelper.Position - new Vector2(a.Texture.Width / 2, a.Texture.Height / 2) - mCamera.Position;
+				a.Position = CalculatePlacePositionOrigin(a);
 				a.DrawZ = a.PositionY + a.Texture.Height;
-				mlevelSceneData.Items.Add(a);
+				GameLogic.LevelSceneData.Items.Add(a);
 			}
 			else if (GameLogic.GhostData.Name.Contains("Matches"))
 			{
 				Matches d = new Matches(Vector2.Zero, GameLogic.GhostData.Name);
-				d.Position = MouseHelper.Position - new Vector2(d.Texture.Width / 2, d.Texture.Height / 2) - mCamera.Position;
+				d.Position = CalculatePlacePositionOrigin(d);
 				d.DrawZ = d.PositionY + d.Texture.Height;
-				mlevelSceneData.Items.Add(d);
+				GameLogic.LevelSceneData.Items.Add(d);
 			}
+
+			somethingUpdated = true;
+		}
+
+		private void PlaceEnemy()
+		{
+			if (GameLogic.GhostData.Name.Contains("Spider"))
+			{
+				Spider s = new Spider();
+				s.Position = CalculatePlacePositionOrigin(new Vector2(32, 32));
+				GameLogic.LevelSceneData.Enemies.Add(s);
+				GameLogic.SelectedEntity = s;
+			}
+			else if (GameLogic.GhostData.Name.Contains("Witch"))
+			{
+				Witch w = new Witch();
+				w.Position = CalculatePlacePositionOrigin(new Vector2(32, 32));
+				GameLogic.LevelSceneData.Enemies.Add(w);
+				GameLogic.SelectedEntity = w;
+			}
+			else if (GameLogic.GhostData.Name.Contains("Wolf"))
+			{
+				Wolf w = new Wolf();
+				w.Position = CalculatePlacePositionOrigin(new Vector2(32, 32));
+				GameLogic.LevelSceneData.Enemies.Add(w);
+				GameLogic.SelectedEntity = w;
+			}
+
+			somethingUpdated = true;
 		}
 
 		private void PlaceLight()
 		{
 			float depth = 1 / GameLogic.ZDepth + 1;
 			// 32x32 da Texture 64x64 Groß ist und um den Origin verschoben wird.
-			Vector2 mousePosition = MouseHelper.Position - new Vector2(32,32) - mCamera.Position;
-
-
 			if (GameLogic.GhostData.Name.Contains("Direction"))
 			{
-				DirectionLight d = new DirectionLight(mousePosition);
+				DirectionLight d = new DirectionLight();
+				d.Position = CalculatePlacePositionOrigin(new Vector2(32, 32));
 				d.Depth = depth;
-				mlevelSceneData.Lights.Add(d);
+				GameLogic.LevelSceneData.Lights.Add(d);
 				GameLogic.SelectedEntity = d;
 			}
 			else if (GameLogic.GhostData.Name.Contains("Point"))
 			{
-				PointLight p = new PointLight(mousePosition);
+				PointLight p = new PointLight();
+				p.Position = CalculatePlacePositionOrigin(new Vector2(32, 32));
 				p.Depth = depth;
-				mlevelSceneData.Lights.Add(p);
+				GameLogic.LevelSceneData.Lights.Add(p);
 				GameLogic.SelectedEntity = p;
+				mLightState = LightState.Range;
 			}
 			else if (GameLogic.GhostData.Name.Contains("Spot"))
 			{
-				SpotLight s = new SpotLight(mousePosition);
+				SpotLight s = new SpotLight();
+				s.Position = CalculatePlacePositionOrigin(new Vector2(32, 32));
 				s.Depth = depth;
-				mlevelSceneData.Lights.Add(s);
+				GameLogic.LevelSceneData.Lights.Add(s);
 				GameLogic.SelectedEntity = s;
 			}
 
-			mLightState = LightState.Range;
+			somethingUpdated = true;
+			// Später benutzen wenn Lichter komplett implementiert
+			//mLightState = LightState.Range;
 		}
 
 		private void SetLightRange()
 		{
 			int foundBy = -1;
-			for (int i = 0; i < mlevelSceneData.Lights.Count; i++)
-				if (mlevelSceneData.Lights[i] == GameLogic.SelectedEntity)
+			for (int i = 0; i < GameLogic.LevelSceneData.Lights.Count; i++)
+				if (GameLogic.LevelSceneData.Lights[i] == GameLogic.SelectedEntity)
 					foundBy = i;
 
 			if (foundBy < 0) return;
 
-			Light l = mlevelSceneData.Lights[foundBy];
-			l.Range = Vector2.Distance(l.Position,(new Vector2(MouseHelper.Position.X - (int)mCamera.Position.X, MouseHelper.Position.Y - (int)mCamera.Position.Y) - new Vector2(32,32)));
+			PointLight l = (PointLight)GameLogic.LevelSceneData.Lights[foundBy];
+			l.Radius = Vector2.Distance(l.Position, (new Vector2(MouseHelper.Position.X - (int)mCamera.Position.X, MouseHelper.Position.Y - (int)mCamera.Position.Y) - new Vector2(32, 32)));
 			l.SetDrawCircle();
+
 			if (MouseHelper.Instance.IsClickedLeft)
 			{
 				l.CollisionBox = new Rectangle(l.PositionX, l.PositionY, 64, 64);
@@ -661,49 +868,66 @@ namespace MenuEditor.GameContent.Scenes
 			switch(GameLogic.EState)
 			{
                 case EditorState.Standard:
-                    foreach(GameObject go in mlevelSceneData.BackgroundSprites)
+                    foreach(GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
                         if (go.CollisionBox.Contains(MousePosition) && (GameLogic.ZDepth > go.DrawZ))
                         {
 							changeEntity = ChangeSelectedEntity(go);
                             return;
                         }
 
-					foreach(InteractiveObject io in mlevelSceneData.InteractiveObjects)
+					foreach(InteractiveObject io in GameLogic.LevelSceneData.InteractiveObjects)
 						if (io.CollisionBox.Contains(MousePosition) && (GameLogic.ZDepth > io.DrawZ))
 						{
 							changeEntity = ChangeSelectedEntity(io);
 						}
 
-					foreach(Collectable c in mlevelSceneData.Collectables)
+					foreach(Collectable c in GameLogic.LevelSceneData.Collectables)
 						if (c.CollisionBox.Contains(MousePosition) && (GameLogic.ZDepth > c.DrawZ))
 						{
 							changeEntity = ChangeSelectedEntity(c);
 							return;
 						}
 
-					foreach(Item i in mlevelSceneData.Items)
+					foreach(Item i in GameLogic.LevelSceneData.Items)
 						if (i.CollisionBox.Contains(MousePosition) && (GameLogic.ZDepth > i.DrawZ))
 						{
 							changeEntity = ChangeSelectedEntity(i);
 							return;
 						}
 
-					foreach (Light l in mlevelSceneData.Lights)
+					foreach (Light l in GameLogic.LevelSceneData.Lights)
 						if (l.CollisionBox.Contains(MousePosition) && (GameLogic.ZDepth > l.DrawZ))
 						{
 							changeEntity = ChangeSelectedEntity(l);
 							return;
 						}
+
+					foreach(Enemy e in GameLogic.LevelSceneData.Enemies)
+						if (e.CollisionBox.Contains(MousePosition) && (GameLogic.ZDepth > e.DrawZ))
+						{
+							changeEntity = ChangeSelectedEntity(e);
+							return;
+						}
 					break;
 
 				case EditorState.PlaceWayPoint:
-					foreach (Waypoint w in mlevelSceneData.Waypoints)
+					foreach (Waypoint w in GameLogic.LevelSceneData.Waypoints)
                         if (w.CollisionBox.Contains(MousePosition))
 						{
 							changeEntity = ChangeSelectedEntity(w);
 							return;
 						}
 					break;
+
+				case EditorState.PlaceEventArea:
+					foreach (EventTrigger e in GameLogic.LevelSceneData.Events)
+                        if (e.CollisionBox.Contains(MousePosition))
+						{
+							changeEntity = ChangeSelectedEntity(e);
+							return;
+						}
+					break;
+
 			}
 
             if(!changeEntity)
@@ -723,14 +947,14 @@ namespace MenuEditor.GameContent.Scenes
 
 		private void SortBackgroundPlane()
 		{
-			for (int j = mlevelSceneData.BackgroundSprites.Count - 1; j > 0 ; j--)
-				for (int i = 0; i < mlevelSceneData.BackgroundSprites.Count - 1; i++)
+			for (int j = GameLogic.LevelSceneData.BackgroundSprites.Count - 1; j > 0 ; j--)
+				for (int i = 0; i < GameLogic.LevelSceneData.BackgroundSprites.Count - 1; i++)
 				{
-					if (mlevelSceneData.BackgroundSprites[i].DrawZ > mlevelSceneData.BackgroundSprites[i + 1].DrawZ)
+					if (GameLogic.LevelSceneData.BackgroundSprites[i].DrawZ > GameLogic.LevelSceneData.BackgroundSprites[i + 1].DrawZ)
 					{
-						GameObject temp = mlevelSceneData.BackgroundSprites[i];
-						mlevelSceneData.BackgroundSprites[i] = mlevelSceneData.BackgroundSprites[i + 1];
-						mlevelSceneData.BackgroundSprites[i + 1] = temp;
+						GameObject temp = GameLogic.LevelSceneData.BackgroundSprites[i];
+						GameLogic.LevelSceneData.BackgroundSprites[i] = GameLogic.LevelSceneData.BackgroundSprites[i + 1];
+						GameLogic.LevelSceneData.BackgroundSprites[i + 1] = temp;
 					}
 				}
 
@@ -739,28 +963,28 @@ namespace MenuEditor.GameContent.Scenes
         private void RemoveObjectFromPlane()
         {
 			if (GameLogic.SelectedEntity.GetType() == typeof(Waypoint))
-				mlevelSceneData.Waypoints.Remove((Waypoint)GameLogic.SelectedEntity);
+				GameLogic.LevelSceneData.Waypoints.Remove((Waypoint)GameLogic.SelectedEntity);
 
 			else if (GameLogic.SelectedEntity.GetType() == typeof(DirectionLight)
 				|| GameLogic.SelectedEntity.GetType() == typeof(PointLight)
 				|| GameLogic.SelectedEntity.GetType() == typeof(SpotLight))
-				mlevelSceneData.Lights.Remove((Light)GameLogic.SelectedEntity);
+				GameLogic.LevelSceneData.Lights.Remove((Light)GameLogic.SelectedEntity);
 
 			else if (GameLogic.SelectedEntity.GetType() == typeof(InteractiveObject))
-				mlevelSceneData.InteractiveObjects.Remove((InteractiveObject)GameLogic.SelectedEntity);
+				GameLogic.LevelSceneData.InteractiveObjects.Remove((InteractiveObject)GameLogic.SelectedEntity);
 
 			else if (GameLogic.SelectedEntity.GetType() == typeof(Collectable))
-				mlevelSceneData.Collectables.Remove((Collectable)GameLogic.SelectedEntity);
+				GameLogic.LevelSceneData.Collectables.Remove((Collectable)GameLogic.SelectedEntity);
 
 			else if (GameLogic.SelectedEntity.GetType() == typeof(Branch)
 				|| GameLogic.SelectedEntity.GetType() == typeof(Key)
 				|| GameLogic.SelectedEntity.GetType() == typeof(Knife)
 				|| GameLogic.SelectedEntity.GetType() == typeof(Lantern)
 				|| GameLogic.SelectedEntity.GetType() == typeof(Matches))
-				mlevelSceneData.Items.Remove((Item)GameLogic.SelectedEntity);
+				GameLogic.LevelSceneData.Items.Remove((Item)GameLogic.SelectedEntity);
 
 			else
-				mlevelSceneData.BackgroundSprites.Remove(GameLogic.SelectedEntity);
+				GameLogic.LevelSceneData.BackgroundSprites.Remove(GameLogic.SelectedEntity);
             
 			GameLogic.SelectEntityRectangle.IsSelected = false;
             GameLogic.SelectedEntity = null;
@@ -776,7 +1000,7 @@ namespace MenuEditor.GameContent.Scenes
 		/// <param name="go"></param>
 		private void PlaceElementInPlane(GameObject go)
 		{
-			mlevelSceneData.BackgroundSprites.Add(go);
+			GameLogic.LevelSceneData.BackgroundSprites.Add(go);
             GameLogic.SelectedEntity = go;
             GameLogic.SelectEntityRectangle = new SelectRectangle(go.Position, go.CollisionBox);
 			SortBackgroundPlane();
@@ -832,9 +1056,13 @@ namespace MenuEditor.GameContent.Scenes
 					XmlSerializer xml = new XmlSerializer(typeof(SceneData));
 
 					TextWriter writer = new StreamWriter(myStream);
-					xml.Serialize(writer, mlevelSceneData);
+					xml.Serialize(writer, GameLogic.LevelSceneData);
 					writer.Close();
 					myStream.Close();
+
+					SaveDiffuseBackground(saveFileDialog1.FileName);
+					SaveNormalBackground(saveFileDialog1.FileName);
+					SaveDepthBackground(saveFileDialog1.FileName);
 				}
 			}
 			MouseHelper.ResetClick();
@@ -845,7 +1073,7 @@ namespace MenuEditor.GameContent.Scenes
 			// Damit beim Klicken nicht ausversehn ein Rectangle gezogen wird.
 			GameLogic.EState = EditorState.Standard;
 
-			mlevelSceneData.ResetLevel();
+			GameLogic.LevelSceneData.ResetLevel();
 			Stream myStream;
 			OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
@@ -861,25 +1089,39 @@ namespace MenuEditor.GameContent.Scenes
 					XmlSerializer xml = new XmlSerializer(typeof(SceneData));
 
 					TextReader reader = new StreamReader(myStream);
-					mlevelSceneData = (SceneData)xml.Deserialize(myStream);
+					GameLogic.LevelSceneData = (SceneData)xml.Deserialize(myStream);
 					reader.Close();
 					myStream.Close();
 				}
 			LoadAllTexturesInPlanes();
 			LoadTextures();
 			GetHighestId();
+			mCamera.GameScreen = GameLogic.LevelSceneData.GamePlane;
+
+			mXmlForm.ResetStats();
 			}
 			MouseHelper.ResetClick();
 			
+		}
+
+		private void ShowXmlEditor()
+		{
+			if (!GameLogic.IsXmlFormShow)
+			{
+				mXmlForm = new Form1();
+				mXmlForm.Show();
+				GameLogic.IsXmlFormShow = true;
+			}
+
 		}
         
         public void CreateNewScene(Rectangle pGameScreenSize)
         {
             mCamera.Position = new Vector2(0,20);
             mCamera.GameScreen = pGameScreenSize;
-			mlevelSceneData.ResetLevel();
-			mlevelSceneData.GamePlane = pGameScreenSize;
-			GameLogic.ZDepth = mlevelSceneData.GamePlane.Height;
+			GameLogic.LevelSceneData.ResetLevel();
+			GameLogic.LevelSceneData.GamePlane = pGameScreenSize;
+			GameLogic.ZDepth = GameLogic.LevelSceneData.GamePlane.Height;
 			BaseObject.mIdAll = 0;
 		}
 
@@ -893,26 +1135,34 @@ namespace MenuEditor.GameContent.Scenes
 		{
 			int pHighestId = 0;
 
-			foreach (GameObject go in mlevelSceneData.Collectables)
+			foreach (GameObject go in GameLogic.LevelSceneData.Collectables)
 				if (go.ObjectId > pHighestId)
 					pHighestId = go.ObjectId;
 
-			foreach (GameObject go in mlevelSceneData.Items)
+			foreach (GameObject go in GameLogic.LevelSceneData.Items)
 				if (go.ObjectId > pHighestId)
 					pHighestId = go.ObjectId;
 
-			foreach (GameObject go in mlevelSceneData.Waypoints)
+			foreach (GameObject go in GameLogic.LevelSceneData.Waypoints)
 				if (go.ObjectId > pHighestId)
 					pHighestId = go.ObjectId;
 
-			foreach (GameObject go in mlevelSceneData.Enemies)
+			foreach (GameObject go in GameLogic.LevelSceneData.Enemies)
 				if (go.ObjectId > pHighestId)
 					pHighestId = go.ObjectId;
 
-			for (int i = 0; i < mlevelSceneData.BackgroundSprites.Count; i++)
-				foreach (GameObject go in mlevelSceneData.BackgroundSprites)
+			for (int i = 0; i < GameLogic.LevelSceneData.BackgroundSprites.Count; i++)
+				foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
 					if (go.ObjectId > pHighestId)
 						pHighestId = go.ObjectId;
+
+			foreach(GameObject go in GameLogic.LevelSceneData.Lights)
+				if (go.ObjectId > pHighestId)
+					pHighestId = go.ObjectId;
+
+			foreach(GameObject go in GameLogic.LevelSceneData.InteractiveObjects)
+				if (go.ObjectId > pHighestId)
+					pHighestId = go.ObjectId;
 
 			BaseObject.mIdAll = pHighestId;
 		}
@@ -920,16 +1170,16 @@ namespace MenuEditor.GameContent.Scenes
 		// Muss Ingame auch getätigt werden.
 		private void LoadAllTexturesInPlanes()
 		{
-			foreach (GameObject go in mlevelSceneData.BackgroundSprites)
+			foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
 			{
 				if (go.GetType() == typeof(Sprite))
 				{
 					Sprite s = (Sprite)go;
-					s.Texture = TextureManager.Instance.GetElementByString(s.TextureName);
+					s.LoadTextures();
 				}
 			}
 
-			foreach(InteractiveObject io in mlevelSceneData.InteractiveObjects)
+			foreach(InteractiveObject io in GameLogic.LevelSceneData.InteractiveObjects)
 			{
 				io.Texture = TextureManager.Instance.GetElementByString(io.TextureName);
 			}
@@ -937,10 +1187,10 @@ namespace MenuEditor.GameContent.Scenes
 
 		private void LoadTextures()
 		{
-			foreach (Collectable c in mlevelSceneData.Collectables)
+			foreach (Collectable c in GameLogic.LevelSceneData.Collectables)
 				c.Texture = TextureManager.Instance.GetElementByString(c.TextureName);
 
-			foreach (Item i in mlevelSceneData.Items)
+			foreach (Item i in GameLogic.LevelSceneData.Items)
 				i.Texture = TextureManager.Instance.GetElementByString(i.TextureName);
 		}
 
@@ -949,7 +1199,7 @@ namespace MenuEditor.GameContent.Scenes
 		#region PlaneDropDownMenu
 		private void SetAllPlanesVisible()
 		{
-			GameLogic.ZDepth = mlevelSceneData.GamePlane.Height;
+			GameLogic.ZDepth = GameLogic.LevelSceneData.GamePlane.Height;
 			MouseHelper.ResetClick();
 		}
 
@@ -958,6 +1208,107 @@ namespace MenuEditor.GameContent.Scenes
 			GameLogic.EState = EditorState.PlaceMoveArea;
 			MouseHelper.ResetClick();
 		}
+		#endregion
+
+		#region RenderDropDown
+
+		private void SaveDiffuseBackground(String pPath)
+		{
+			pPath = pPath.Replace("\\hug\\", "\\backgrounds\\");
+			pPath = pPath.Replace(".hug", "Diffuse.png");
+			Stream myStream = File.Create(pPath);
+			RenderTarget2D rt = new RenderTarget2D(EngineSettings.Graphics.GraphicsDevice, mCamera.GameScreen.Width, mCamera.GameScreen.Height);
+			
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(rt);
+			
+			mSpriteBatch.Begin();
+			EngineSettings.Graphics.GraphicsDevice.Clear(Color.ForestGreen);
+			if(mGround != null)
+				mGround.Draw(mSpriteBatch);
+			foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
+				go.Draw(mSpriteBatch);
+			mSpriteBatch.End();
+			
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(null);
+			
+			rt.SaveAsPng(myStream, rt.Width, rt.Height);
+			myStream.Close();
+		}
+
+		private void SaveNormalBackground(String pPath)
+		{
+			pPath = pPath.Replace("\\hug\\", "\\backgrounds\\");
+			pPath = pPath.Replace(".hug", "Normal.png");
+			Stream myStream = File.Create(pPath);
+			RenderTarget2D rt = new RenderTarget2D(EngineSettings.Graphics.GraphicsDevice, mCamera.GameScreen.Width, mCamera.GameScreen.Height);
+
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(rt);
+
+			mSpriteBatch.Begin();
+			EngineSettings.Graphics.GraphicsDevice.Clear(new Color(129,129,255));
+			foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
+				go.DrawNormal(mSpriteBatch);
+			mSpriteBatch.End();
+
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(null);
+
+			rt.SaveAsPng(myStream, rt.Width, rt.Height);
+			myStream.Close();
+		}
+
+		private void SaveDepthBackground(String pPath)
+		{
+			pPath = pPath.Replace("\\hug\\", "\\backgrounds\\");
+			pPath = pPath.Replace(".hug", "Depth.png");
+			Stream myStream = File.Create(pPath);
+			RenderTarget2D rt = new RenderTarget2D(EngineSettings.Graphics.GraphicsDevice, mCamera.GameScreen.Width, mCamera.GameScreen.Height);
+
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(rt);
+
+			mSpriteBatch.Begin();
+			EngineSettings.Graphics.GraphicsDevice.Clear(Color.White);
+			foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
+				go.DrawDepth(mSpriteBatch);
+			mSpriteBatch.End();
+
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(null);
+
+			rt.SaveAsPng(myStream, rt.Width, rt.Height);
+			myStream.Close();
+		}
+
+		#region Rendertarget DropDown
+
+		private void SetDiffuseRenderTarget()
+		{
+			mRenderState = RenderState.Diffuse;
+		}
+
+		private void SetNormalRenderTarget()
+		{
+			mRenderState = RenderState.Normal;
+		}
+
+		private void SetDepthRenderTarget()
+		{
+			mRenderState = RenderState.Depth;
+		}
+
+		private void SetAORenderTarget()
+		{
+			mRenderState = RenderState.AO;
+		}
+
+		private void SetLightRenderTarget()
+		{
+			mRenderState = RenderState.Light;
+		}
+
+		private void SetFinalRenderTarget()
+		{
+			mRenderState = RenderState.Final;
+		}
+		#endregion
 		#endregion
 
 		#endregion

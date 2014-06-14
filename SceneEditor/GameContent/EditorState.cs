@@ -14,6 +14,9 @@ namespace SceneEditor.GameContent
 		PlaceSprites,
 		PlaceCollectable,
 		PlaceItem,
-		PlaceLight
+		PlaceLight,
+		PlaceGround,
+		PlaceEventArea,
+		PlaceEnemy
 	}
 }
