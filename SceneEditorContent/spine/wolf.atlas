@@ -1,0 +1,27 @@
+
+wolf.png
+size: 216,114
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+images/front/wolf_front
+  rotate: false
+  xy: 158, 2
+  size: 32, 112
+  orig: 32, 112
+  offset: 0, 0
+  index: -1
+images/rear/wolf_rear
+  rotate: false
+  xy: 192, 2
+  size: 24, 112
+  orig: 24, 112
+  offset: 0, 0
+  index: -1
+images/side/wolf_side
+  rotate: false
+  xy: 2, 2
+  size: 154, 112
+  orig: 154, 112
+  offset: 0, 0
+  index: -1

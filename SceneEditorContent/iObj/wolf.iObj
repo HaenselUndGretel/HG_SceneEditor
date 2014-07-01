@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<InteractiveObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <ObjectId>4000</ObjectId>
+  <Position>
+    <X>0</X>
+    <Y>0</Y>
+  </Position>
+  <CollisionBox>
+    <X>0</X>
+    <Y>0</Y>
+    <Width>0</Width>
+    <Height>0</Height>
+    <Location>
+      <X>0</X>
+      <Y>0</Y>
+    </Location>
+  </CollisionBox>
+  <IsVisible>true</IsVisible>
+  <DrawZ>0</DrawZ>
+  <NormalZ>0</NormalZ>
+  <Name>wolf</Name>
+  <Height>0</Height>
+  <Width>0</Width>
+  <ActionRectList />
+  <CollisionRectList />
+  <ActionPosition1>
+    <X>0</X>
+    <Y>0</Y>
+  </ActionPosition1>
+  <ActionPosition2>
+    <X>0</X>
+    <Y>0</Y>
+  </ActionPosition2>
+  <ActionId>0</ActionId>
+</InteractiveObject>

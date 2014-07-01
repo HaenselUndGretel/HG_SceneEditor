@@ -2,7 +2,6 @@
 using KryptonEngine;
 using KryptonEngine.Controls;
 using KryptonEngine.Entities;
-using KryptonEngine.HG_Data.Objects.Lights;
 using KryptonEngine.Manager;
 using KryptonEngine.FModAudio;
 using MenuEditor.GameContent;
@@ -20,6 +19,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using MenuEditor.GameContent.Interface;
+using KryptonEngine.HG_Data;
 
 namespace Xml_Editor
 {
@@ -508,6 +508,10 @@ namespace Xml_Editor
 		private Vector3 ConvertTextboxToVector3Normalized(TextBox tb, int NormalizedValue)
 		{
 			Vector3 nVector = ConvertTextboxToVector3(tb);
+
+			nVector.X = (nVector.X > NormalizedValue) ? NormalizedValue : nVector.X;
+			nVector.Y = (nVector.Y > NormalizedValue) ? NormalizedValue : nVector.Y;
+			nVector.Z = (nVector.Z > NormalizedValue) ? NormalizedValue : nVector.Z;
 
 			nVector.X = (nVector.X > 0) ? nVector.X / NormalizedValue : 0;
 			nVector.Y = (nVector.Y > 0) ? nVector.Y / NormalizedValue : 0;

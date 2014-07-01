@@ -63,6 +63,8 @@ namespace MenuEditor.GameContent.Interface
         #region Porperties
         private List<Data> mEntity = new List<Data>();
 		private const int THUMBNAIL_PADDING = 10;
+		private String ObjectDescription = "";
+		private bool MouseOverObject = false;
         #endregion
 
         #region Getter & Setter
@@ -84,58 +86,82 @@ namespace MenuEditor.GameContent.Interface
 
         #region Override Methods
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            if (!IsVisible) return;
-            base.Draw(spriteBatch);
+		public override void Draw(SpriteBatch spriteBatch)
+		{
+			if (!IsVisible) return;
+			base.Draw(spriteBatch);
 
-            DrawThumbnails(spriteBatch);
-            if(SelectRectangleObject.IsSelected)
-                SelectRectangleObject.Draw(spriteBatch);
-        }
+			DrawThumbnails(spriteBatch);
+			if (SelectRectangleObject.IsSelected)
+				SelectRectangleObject.Draw(spriteBatch);
+
+			if (MouseOverObject)
+			{
+				spriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), MouseHelper.Position - new Vector2(0, 15), new Rectangle(0, 0, (int)font.MeasureString(ObjectDescription).X + 3, 20), Color.White);
+				spriteBatch.DrawString(font, ObjectDescription, MouseHelper.Position - new Vector2(0, 20), Color.Black);
+
+			}
+		}
 
         public override void Update()
         {
-            if (mDrawRectangle.Contains(MouseHelper.PositionPoint) && MouseHelper.Instance.IsClickedLeft)
-            {
-                foreach(Data d in mEntity)
-                {
-					if (d.Texture.CollisionBox.Contains(MouseHelper.PositionPoint) && MouseHelper.Instance.IsClickedLeft)
+			if (mDrawRectangle.Contains(MouseHelper.PositionPoint))
+			{
+				if (MouseHelper.Instance.IsClickedLeft)
+				{
+					foreach (Data d in mEntity)
 					{
-						SelectRectangleObject.Position = d.Texture.Position;
-                        SelectRectangleObject.IsSelected = true;
-						GameLogic.GhostData = d;
-						if (d.Name == "IconMoveArea")
-							GameLogic.EState = EditorState.PlaceWayPoint;
-						else if (d.Name == "IconEventArea")
-							GameLogic.EState = EditorState.PlaceEventArea;
-						else if (d.Name.Contains("Enemy"))
-							GameLogic.EState = EditorState.PlaceEnemy;
-						else if (d.Name.Contains("Collectable"))
-							GameLogic.EState = EditorState.PlaceCollectable;
-						else if (d.Name.Contains("Item"))
-							GameLogic.EState = EditorState.PlaceItem;
-						else if (d.Name.Contains("Light"))
-							GameLogic.EState = EditorState.PlaceLight;
-						else if (InteractiveObjectDataManager.Instance.HasElement(d.Name))
-							GameLogic.EState = EditorState.PlaceInteractiveObject;
-						else if (d.Name.Contains("Ground"))
-							GameLogic.EState = EditorState.PlaceGround;
+						if (d.Texture.CollisionBox.Contains(MouseHelper.PositionPoint) && MouseHelper.Instance.IsClickedLeft)
+						{
+							SelectRectangleObject.Position = d.Texture.Position;
+							SelectRectangleObject.IsSelected = true;
+							GameLogic.GhostData = d;
+							if (d.Name == "IconMoveArea")
+								GameLogic.EState = EditorState.PlaceWayPoint;
+							else if (d.Name == "IconEventArea")
+								GameLogic.EState = EditorState.PlaceEventArea;
+							else if (d.Name.Contains("wolf") | d.Name.Contains("witch") | d.Name.Contains("spider"))
+								GameLogic.EState = EditorState.PlaceEnemy;
+							else if (d.Name.Contains("Collectable"))
+								GameLogic.EState = EditorState.PlaceCollectable;
+							else if (d.Name.Contains("Item"))
+								GameLogic.EState = EditorState.PlaceItem;
+							else if (d.Name.Contains("Light"))
+								GameLogic.EState = EditorState.PlaceLight;
+							else if (InteractiveObjectDataManager.Instance.HasElement(d.Name))
+								GameLogic.EState = EditorState.PlaceInteractiveObject;
+							else if (d.Name.Contains("Ground"))
+								GameLogic.EState = EditorState.PlaceGround;
 
+							else
+								GameLogic.EState = EditorState.PlaceSprites;
+							break;
+						}
 						else
-							GameLogic.EState = EditorState.PlaceSprites;
-						break;
-                    }
-					else
-					{
-						SelectRectangleObject.IsSelected = false;
-                        GameLogic.SelectedEntity = null;
-						GameLogic.EState = EditorState.Standard;
+						{
+							SelectRectangleObject.IsSelected = false;
+							GameLogic.SelectedEntity = null;
+							GameLogic.EState = EditorState.Standard;
+						}
 					}
-                }
-                MouseHelper.ResetClick();
-            }
- 
+					MouseHelper.ResetClick();
+				}
+				else if (!MouseHelper.Instance.IsClickedLeft)
+				{
+					foreach (Data d in mEntity)
+					{
+						if (d.Texture.CollisionBox.Contains(MouseHelper.PositionPoint))
+						{
+							MouseOverObject = true;
+							ObjectDescription = d.Name;
+							return;
+						}
+						else
+							MouseOverObject = false;
+					}
+				}
+			}
+			MouseOverObject = false;
         }
         #endregion
 

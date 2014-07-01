@@ -1,0 +1,28 @@
+{
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "dummy", "bone": "root", "attachment": "dummy" }
+],
+"skins": {
+	"front": {
+		"dummy": {
+			"dummy": { "name": "images/front/wolf_front", "y": 56, "width": 32, "height": 112 }
+		}
+	},
+	"rear": {
+		"dummy": {
+			"dummy": { "name": "images/rear/wolf_rear", "y": 56, "width": 24, "height": 112 }
+		}
+	},
+	"side": {
+		"dummy": {
+			"dummy": { "name": "images/side/wolf_side", "y": 56, "width": 154, "height": 112 }
+		}
+	}
+},
+"animations": {
+	"animation": {}
+}
+}
