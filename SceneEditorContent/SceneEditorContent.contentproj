@@ -28,6 +28,7 @@
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.XImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.AudioImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="font\font.spritefont">
@@ -54,97 +55,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gfx\gretel.png">
-      <Name>gretel</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\ItemBranch.png">
-      <Name>ItemBranch</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\ItemKey.png">
-      <Name>ItemKey</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\ItemKnife.png">
-      <Name>ItemKnife</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\ItemLantern.png">
-      <Name>ItemLantern</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\ItemMatches.png">
-      <Name>ItemMatches</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="gfx\IconDirectionLight.png">
-      <Name>IconDirectionLight</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
     <Compile Include="gfx\IconPointLight.png">
       <Name>IconPointLight</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\IconSpotLight.png">
-      <Name>IconSpotLight</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="gfx\Collectable1.png">
-      <Name>Collectable1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\Collectable2.png">
-      <Name>Collectable2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\Collectable3.png">
-      <Name>Collectable3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\Collectable4.png">
-      <Name>Collectable4</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\Collectable5.png">
-      <Name>Collectable5</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\Collectable6.png">
-      <Name>Collectable6</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\Collectable7.png">
-      <Name>Collectable7</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\Collectable8.png">
-      <Name>Collectable8</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\Collectable9.png">
-      <Name>Collectable9</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -164,246 +76,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="gfx\GroundTexture.png">
-      <Name>GroundTexture</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="gfx\stone1.png">
-      <Name>stone1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone10.png">
-      <Name>stone10</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone10Depth.png">
-      <Name>stone10Depth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone10Normal.png">
-      <Name>stone10Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone11.png">
-      <Name>stone11</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone11Depth.png">
-      <Name>stone11Depth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone11Normal.png">
-      <Name>stone11Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone12.png">
-      <Name>stone12</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone12Depth.png">
-      <Name>stone12Depth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone12Normal.png">
-      <Name>stone12Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone2Normal.png">
-      <Name>stone2Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone3Normal.png">
-      <Name>stone3Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone7.png">
-      <Name>stone7</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone7Depth.png">
-      <Name>stone7Depth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone7Normal.png">
-      <Name>stone7Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone8.png">
-      <Name>stone8</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone8Depth.png">
-      <Name>stone8Depth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone8Normal.png">
-      <Name>stone8Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone9.png">
-      <Name>stone9</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone9Depth.png">
-      <Name>stone9Depth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\stone9Normal.png">
-      <Name>stone9Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree1.png">
-      <Name>tree1</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree1Depth.png">
-      <Name>tree1Depth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree1Normal.png">
-      <Name>tree1Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree2.png">
-      <Name>tree2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree2Depth.png">
-      <Name>tree2Depth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree2Normal.png">
-      <Name>tree2Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree3.png">
-      <Name>tree3</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree3Depth.png">
-      <Name>tree3Depth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree3Normal.png">
-      <Name>tree3Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree4.png">
-      <Name>tree4</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree4Depth.png">
-      <Name>tree4Depth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\tree4Normal.png">
-      <Name>tree4Normal</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="gfx\IconEventArea.png">
       <Name>IconEventArea</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="gfx\EnemySpider.png">
-      <Name>EnemySpider</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\EnemyWitch.png">
-      <Name>EnemyWitch</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="gfx\EnemyWolf.png">
-      <Name>EnemyWolf</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sfx\MenschenSounds5.mp3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>MenschenSounds5</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sfx\MenschenSounds1.mp3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>MenschenSounds1</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sfx\MenschenSounds2.mp3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>MenschenSounds2</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sfx\MenschenSounds3.mp3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>MenschenSounds3</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="sfx\MenschenSounds4.mp3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Name>MenschenSounds4</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="gfx\def.png">
-      <Name>def</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -443,12 +117,591 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="gfx\bitch.png">
+      <Name>bitch</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\bitchAO.png">
+      <Name>bitchAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\bitchDepth.png">
+      <Name>bitchDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\bitchNormal.png">
+      <Name>bitchNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvBed.png">
+      <Name>EnvBed</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvBedAO.png">
+      <Name>EnvBedAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvBedDepth.png">
+      <Name>EnvBedDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvBedNormal.png">
+      <Name>EnvBedNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChair.png">
+      <Name>EnvChair</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChair2.png">
+      <Name>EnvChair2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChair2AO.png">
+      <Name>EnvChair2AO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChair2Depth.png">
+      <Name>EnvChair2Depth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChair2Normal.png">
+      <Name>EnvChair2Normal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChair3.png">
+      <Name>EnvChair3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChair3AO.png">
+      <Name>EnvChair3AO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChair3Depth.png">
+      <Name>EnvChair3Depth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChair3Normal.png">
+      <Name>EnvChair3Normal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChairAO.png">
+      <Name>EnvChairAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChairDepth.png">
+      <Name>EnvChairDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvChairNormal.png">
+      <Name>EnvChairNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvDrawer.png">
+      <Name>EnvDrawer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvDrawerAO.png">
+      <Name>EnvDrawerAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvDrawerDepth.png">
+      <Name>EnvDrawerDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvDrawerNormal.png">
+      <Name>EnvDrawerNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvTable.png">
+      <Name>EnvTable</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvTable2.png">
+      <Name>EnvTable2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvTable2AO.png">
+      <Name>EnvTable2AO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvTable2Depth.png">
+      <Name>EnvTable2Depth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvTable2Normal.png">
+      <Name>EnvTable2Normal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvTableAO.png">
+      <Name>EnvTableAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvTableDepth.png">
+      <Name>EnvTableDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvTableNormal.png">
+      <Name>EnvTableNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWell.png">
+      <Name>EnvWell</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWellAO.png">
+      <Name>EnvWellAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWellCavern.png">
+      <Name>EnvWellCavern</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWellCavernAO.png">
+      <Name>EnvWellCavernAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWellCavernDepth.png">
+      <Name>EnvWellCavernDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWellCavernNormal.png">
+      <Name>EnvWellCavernNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWellDepth.png">
+      <Name>EnvWellDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWellNormal.png">
+      <Name>EnvWellNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall1280.png">
+      <Name>EnvWitchWall1280</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall1280AO.png">
+      <Name>EnvWitchWall1280AO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall1280Depth.png">
+      <Name>EnvWitchWall1280Depth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall1280Normal.png">
+      <Name>EnvWitchWall1280Normal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall720Left.png">
+      <Name>EnvWitchWall720Left</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall720LeftAO.png">
+      <Name>EnvWitchWall720LeftAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall720LeftDepth.png">
+      <Name>EnvWitchWall720LeftDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall720LeftNormal.png">
+      <Name>EnvWitchWall720LeftNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall720Right.png">
+      <Name>EnvWitchWall720Right</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall720RightAO.png">
+      <Name>EnvWitchWall720RightAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall720RightDepth.png">
+      <Name>EnvWitchWall720RightDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWall720RightNormal.png">
+      <Name>EnvWitchWall720RightNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWalls.png">
+      <Name>EnvWitchWalls</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWallsAO.png">
+      <Name>EnvWitchWallsAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWallsDepth.png">
+      <Name>EnvWitchWallsDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\EnvWitchWallsNormal.png">
+      <Name>EnvWitchWallsNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\GroundTextureWitchFloor.png">
+      <Name>GroundTextureWitchFloor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\GroundTextureWitchFloorAO.png">
+      <Name>GroundTextureWitchFloorAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\GroundTextureWitchFloorDepth.png">
+      <Name>GroundTextureWitchFloorDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\GroundTextureWitchFloorNormal.png">
+      <Name>GroundTextureWitchFloorNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\GroundTextureWitchFloorRound.png">
+      <Name>GroundTextureWitchFloorRound</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\GroundTextureWitchFloorRoundAO.png">
+      <Name>GroundTextureWitchFloorRoundAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="gfx\GroundTextureWitchFloorRoundNormal.png">
+      <Name>GroundTextureWitchFloorRoundNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="iObj\wolf.iObj">
       <Name>wolf</Name>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Compile Include="spine\wolfXDepth.png">
+      <Name>wolfXDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="spine\wolfYDepth.png">
+      <Name>wolfYDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="spine\laterne.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>laterne</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Content>
+    <Compile Include="spine\laterneDepth.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>laterneDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\laterneNormal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>laterneNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\skeleton.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>skeleton</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\LegUp.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>LegUp</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\jumpgap.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>jumpgap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\knockovertree.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>knockovertree</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\pulldoor.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pulldoor</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\pushrock.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pushrock</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\spacer.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>spacer</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\stepmother.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stepmother</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\slipthroughrock.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>slipthroughrock</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="sfx\SfxFire.mp3">
+      <Name>SfxFire</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="sfx\SfxLegUp.mp3">
+      <Name>SfxLegUp</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="sfx\SfxRockPush.mp3">
+      <Name>SfxRockPush</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="sfx\SfxTreeFall.mp3">
+      <Name>SfxTreeFall</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="sfx\SfxWellBucketUp.mp3">
+      <Name>SfxWellBucketUp</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="sfx\SfxWolfAppear.mp3">
+      <Name>SfxWolfAppear</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="spine\bookShelf.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bookShelf</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\bookShelfAO.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bookShelfAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\bookShelfDepth.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bookShelfDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\bookShelfNormal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bookShelfNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\stonePush.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\stonePush2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\stonePush2AO.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush2AO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\stonePush2Depth.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush2Depth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\stonePush2Normal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush2Normal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\stonePush3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush3</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\StonePush3AO.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StonePush3AO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\StonePush3Depth.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StonePush3Depth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\StonePush3Normal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StonePush3Normal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\stonePush4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush4</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\StonePush4AO.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StonePush4AO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\StonePush4Depth.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StonePush4Depth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\StonePush4Normal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>StonePush4Normal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\stonePushAO.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePushAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\stonePushDepth.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePushDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\stonePushNormal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePushNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\waystone.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>waystone</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\waystoneAO.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>waystoneAO</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\waystoneDepth.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>waystoneDepth</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="spine\waystoneNormal.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>waystoneNormal</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="spine\wolf.atlas">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>wolf</Name>
@@ -463,16 +716,13 @@
       <Name>wolfNormal</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="spine\wolfXDepth.png">
-      <Name>wolfXDepth</Name>
+    <Compile Include="spine\wolfDepth.png">
+      <Name>wolfDepth</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
-    </Compile>
-    <Compile Include="spine\wolfYDepth.png">
-      <Name>wolfYDepth</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -485,6 +735,364 @@
     <Content Include="spine\wolf.settings">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>wolf</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\laterne.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>laterne</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\laterne.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>laterne</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\laterne.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>laterne</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="iObj\laterne.iObj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>laterne</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\skeleton.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>skeleton</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\skeleton.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>skeleton</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\skeleton.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>skeleton</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="iObj\LegUp.iObj">
+      <Name>LegUp</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\LegUp.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>LegUp</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\LegUp.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>LegUp</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\LegUp.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>LegUp</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="iObj\jumpgap.iObj">
+      <Name>jumpgap</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iObj\knockovertree.iObj">
+      <Name>knockovertree</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iObj\pulldoor.iObj">
+      <Name>pulldoor</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iObj\pushrock.iObj">
+      <Name>pushrock</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\jumpgap.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>jumpgap</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\jumpgap.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>jumpgap</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\jumpgap.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>jumpgap1.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>jumpgap</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\knockovertree.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>knockovertree</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\knockovertree.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>knockovertree</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\knockovertree.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>knockovertree.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>knockovertree</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\pulldoor.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pulldoor</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\pulldoor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pulldoor</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\pulldoor.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>pulldoor.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pulldoor</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\pushrock.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pushrock</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\pushrock.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pushrock</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\pushrock.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>pushrock1.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>pushrock</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\spacer.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>spacer</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\spacer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>spacer</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\spacer.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>spacer</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stepmother.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stepmother</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stepmother.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stepmother</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stepmother.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stepmother</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="iObj\slipthroughrock.iObj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>slipthroughrock</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\slipthroughrock.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>slipthroughrock</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\slipthroughrock.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>slipthroughrock</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\slipthroughrock.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>slipthroughrock</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\bookShelf.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bookShelf</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\bookShelf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bookShelf</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\bookShelf.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>bookShelf</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush2.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush2</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush2.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush2</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush2.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush2</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush3.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush3</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush3.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush3</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush3.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush3</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush4.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush4</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush4.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush4</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\stonePush4.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>stonePush4</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\waystone.atlas">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>waystone</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\waystone.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>waystone</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="spine\waystone.settings">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Name>waystone</Name>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="iObj\bookShelf.iObj">
+      <Name>bookShelf</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iObj\stonePush.iObj">
+      <Name>stonePush</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iObj\stonePush2.iObj">
+      <Name>stonePush2</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iObj\stonePush3.iObj">
+      <Name>stonePush3</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iObj\stonePush4.iObj">
+      <Name>stonePush4</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="iObj\waystone.iObj">
+      <Name>waystone</Name>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

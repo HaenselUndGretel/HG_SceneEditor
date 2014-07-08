@@ -1,45 +1,21 @@
 float3 ambientColor;
 float ambientIntensity;
 
-
+sampler DiffuseMap  : register(s0);
+sampler LightMap   : register(s1);
 // MapSampler
-
-Texture LightMap;
-sampler LightMapSampler = sampler_state
- {
-	texture = <LightMap>;
-	magfilter = LINEAR;
-	minfilter = LINEAR;
-	mipfilter = LINEAR;
-	AddressU = mirror;
-	AddressV = mirror;
-};
-
-Texture ColorMap;
-sampler ColorMapSampler = sampler_state 
-{
-	texture = <ColorMap>;
-	magfilter = LINEAR;
-	minfilter = LINEAR;
-	mipfilter = LINEAR;
-	AddressU = mirror;
-	AddressV = mirror;
-};
-
 
 
 struct VertexShaderInput
 {
     float4 inPos: POSITION0;
 	float2 texCoord: TEXCOORD0; 
-	//float4 color: COLOR0;
 };
 
 struct VertexShaderOutput
 {
     float4 Position : POSITION;
 	float2 TexCoord : TEXCOORD0;
-	//float4 Color : COLOR0;
 };
 
 
@@ -51,9 +27,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
    VertexShaderOutput Output = (VertexShaderOutput)0;
 	
 	Output.Position = input.inPos;
-	Output.TexCoord = input.texCoord;
-	///Output.Color = input.color;
-	
+	Output.TexCoord = input.texCoord;	
 	return Output;
 }
 
@@ -61,12 +35,13 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
 
 float4 CombinePs(VertexShaderOutput input) : COLOR
 {
-  float4 colorMap = tex2D(ColorMapSampler, input.TexCoord);
-  float4 lightMap = tex2D(LightMapSampler, input.TexCoord);
+	float4 colorMap = tex2D(DiffuseMap, input.TexCoord);
+	float4 lightMap = tex2D(LightMap, input.TexCoord);
+	float3 ambient = ambientColor* ambientIntensity;
 
-  float3 finalColor = colorMap.rgb* lightMap.rgb;
+	float3 finalColor = (colorMap*lightMap)+(colorMap*ambient);
 
-  finalColor += colorMap.rgb* ambientColor* ambientIntensity;
+  //finalColor += colorMap.rgb* ambientColor* ambientIntensity;
     return float4(finalColor,1);
 }
 

@@ -1,0 +1,13 @@
+
+waystone.png
+size: 56,162
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+ObjSaveStone
+  rotate: false
+  xy: 2, 2
+  size: 54, 160
+  orig: 54, 160
+  offset: 0, 0
+  index: -1

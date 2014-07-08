@@ -27,7 +27,8 @@ struct MRT
 {
 	float4 ColorTarget : COLOR0;
 	float4 NormalTarget: COLOR1;
-	float4 DepthTarget : COLOR2;
+	float4 AoTarget    : COLOR2;
+	float4 DepthTarget : COLOR3;
 	float  Depth	   : DEPTH0;
 };
 
@@ -53,10 +54,15 @@ MRT PixelShaderFunction(VertexShaderOutput input)
 	MRT output = (MRT)0;
 
 	output.ColorTarget	    = tex2D(DiffuseMap, input.UV);
-	output.NormalTarget.rgb = tex2D(NormalMap, input.UV);
-	output.NormalTarget.a   = tex2D(AoMap, input.UV);
+
+	output.NormalTarget = tex2D(NormalMap, input.UV);
+
+	//output.NormalTarget.a   = output.ColorTarget.a;
+
+	output.AoTarget         = tex2D(AoMap, input.UV);
+
 	output.DepthTarget      = tex2D(DepthMap, input.UV);
-	output.Depth            = ((output.DepthTarget.r + output.DepthTarget.g + output.DepthTarget.b) / 3)*input.WorldPos.z;
+	output.Depth = ((output.DepthTarget.r + output.DepthTarget.g + output.DepthTarget.b) / 3); //* ((1-input.UV.y)*0.80)*input.WorldPos.z;
 	output.DepthTarget      = float4(output.Depth, output.Depth, output.Depth, output.DepthTarget.a);
 	
 	return output;

@@ -103,6 +103,8 @@ namespace MenuEditor.GameContent.Scenes
 			mCamera.MoveCamera(new Vector2(0, 20));
 			GameLogic.LevelSceneData = new SceneData();
 			mXmlForm = new Form1();
+			GameLogic.LevelSceneData.SceneAmbientLight = new AmbientLight();
+			mRenderer.AmbientLight = GameLogic.LevelSceneData.SceneAmbientLight;
         }
         #endregion
 
@@ -193,51 +195,37 @@ namespace MenuEditor.GameContent.Scenes
 
         public override void Draw()
         {
-            EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(mRenderTargetDiffuse);
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(null);
 			EngineSettings.Graphics.GraphicsDevice.Clear(Color.ForestGreen);
-
-            DrawBackground();
-
-            mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, null , mCamera.Transform);
-            mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), GameLogic.LevelSceneData.GamePlane, Color.ForestGreen);
-            mSpriteBatch.End();
 
 			DrawPlanes();
 			DrawMoveRectangle();
 
 			DrawCollectables();
-			DrawItems();
 			DrawLights();
 
-			//DrawNormalPlane();
-
-			//DrawDepthPlane();
-
-			//mLighter.GenerateLightMap(mRenderTargetLight, mRenderTargetNormal, mRenderTargetDepthObject, mRenderTargetAO, GameLogic.LevelSceneData.Lights);
-
-			//mLighter.CombineMaps(mRenderTargetFinalGame, mRenderTargetLight, mRenderTargetDiffuse);
-
 			#region DrawFinalRendertargets
-			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(mRenderTargetFinal);
+			//EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(mRenderTargetFinal);
 
-			mSpriteBatch.Begin();
-			switch (mRenderState)
-			{
-				case RenderState.Diffuse: mSpriteBatch.Draw(mRenderTargetDiffuse, Vector2.Zero, Color.White);
-					break;
-				case RenderState.Depth: mSpriteBatch.Draw(mRenderTargetDepthObject, Vector2.Zero, Color.White);
-					break;
-				case RenderState.AO: mSpriteBatch.Draw(mRenderTargetAO, Vector2.Zero, Color.White);
-					break;
-				case RenderState.Final: mSpriteBatch.Draw(mRenderTargetFinalGame, Vector2.Zero, Color.White);
-					break;
-				case RenderState.Light: mSpriteBatch.Draw(mRenderTargetLight, Vector2.Zero, Color.White);
-					break;
-				case RenderState.Normal: mSpriteBatch.Draw(mRenderTargetNormal, Vector2.Zero, Color.White);
-					break;
-			}
-			mSpriteBatch.End();
+			//mSpriteBatch.Begin();
+			//switch (mRenderState)
+			//{
+			//	case RenderState.Diffuse: mSpriteBatch.Draw(mRenderTargetDiffuse, Vector2.Zero, Color.White);
+			//		break;
+			//	case RenderState.Depth: mSpriteBatch.Draw(mRenderTargetDepthObject, Vector2.Zero, Color.White);
+			//		break;
+			//	case RenderState.AO: mSpriteBatch.Draw(mRenderTargetAO, Vector2.Zero, Color.White);
+			//		break;
+			//	case RenderState.Final: mSpriteBatch.Draw(mRenderTargetFinalGame, Vector2.Zero, Color.White);
+			//		break;
+			//	case RenderState.Light: mSpriteBatch.Draw(mRenderTargetLight, Vector2.Zero, Color.White);
+			//		break;
+			//	case RenderState.Normal: mSpriteBatch.Draw(mRenderTargetNormal, Vector2.Zero, Color.White);
+			//		break;
+			//}
+			//mSpriteBatch.End();
 			
+			#endregion
 			DrawGhostEntity();
 
 			switch (GameLogic.EState)
@@ -255,8 +243,7 @@ namespace MenuEditor.GameContent.Scenes
 
 			DrawMenueItems();
 
-			#endregion
-			DrawOnScene();
+			//DrawOnScene();
         }
 
         #endregion
@@ -313,10 +300,11 @@ namespace MenuEditor.GameContent.Scenes
 
 		public void DrawPlanes()
 		{
-			//mRenderer.SetGBuffer();
-			//mRenderer.ClearGBuffer();
+			mRenderer.SetGBuffer();
+			mRenderer.ClearGBuffer();
 
 			mRenderer.Begin(mCamera.Transform);
+
 			if (mGround != null)
 				mGround.Draw(mRenderer);
 
@@ -329,33 +317,28 @@ namespace MenuEditor.GameContent.Scenes
 					io.Draw(mRenderer);
 
 			DrawEnemy();
+			DrawItems();
+			DrawCollectables();
 
 			mRenderer.End();
-			//mRenderer.DisposeGBuffer();
+			mRenderer.DisposeGBuffer();
+			mRenderer.AmbientLight = GameLogic.LevelSceneData.SceneAmbientLight;
+			mRenderer.ProcessLight(GameLogic.LevelSceneData.Lights, mCamera.Transform);
+			mRenderer.ProcessFinalScene();
+
+			mRenderer.DrawFinalTargettOnScreen(mSpriteBatch);
 
 			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null, mCamera.Transform);
-			//if (mGround != null)
-			//	mGround.Draw(mSpriteBatch);
 
 			// Roter Kamera Rand
 			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(-200, -200, mCamera.GameScreen.Width + 600, 200), Color.Red);
 			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(-200, -200, 200, mCamera.GameScreen.Height + 400), Color.Red);
 			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(mCamera.GameScreen.Width, -200, 400, mCamera.GameScreen.Height + 400), Color.Red);
 			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(-200, mCamera.GameScreen.Height, mCamera.GameScreen.Width + 600, 200), Color.Red);
-
-			//foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
-			//	if(go.DrawZ < GameLogic.ZDepth)
-			//		go.Draw(mSpriteBatch);
-
-			//foreach (InteractiveObject io in GameLogic.LevelSceneData.InteractiveObjects)
-			//	if (io.DrawZ < GameLogic.ZDepth)
-			//		io.Draw(mSpriteBatch);
-
 			mSpriteBatch.End();
 
 
 			// Draw-Z Linie
-			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(mRenderTargetDiffuse);
 			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null, mCamera.Transform);
 			mSpriteBatch.Draw(TextureManager.Instance.GetElementByString("pixel"), new Rectangle(0, GameLogic.ZDepth, GameLogic.LevelSceneData.GamePlane.Width, 1), Color.Blue);
 			mSpriteBatch.End();
@@ -428,26 +411,20 @@ namespace MenuEditor.GameContent.Scenes
 
 		private void DrawCollectables()
 		{
-			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, null, mCamera.Transform);
 			foreach (Collectable c in GameLogic.LevelSceneData.Collectables)
-				c.Draw(mSpriteBatch);
-			mSpriteBatch.End();
+				c.Draw(mRenderer);
 		}
 
 		private void DrawItems()
 		{
-			mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, null, null, null, null, mCamera.Transform);
 			foreach (Item i in GameLogic.LevelSceneData.Items)
-				i.Draw(mSpriteBatch);
-			mSpriteBatch.End();
+				i.Draw(mRenderer);
 		}
 
 		private void DrawEnemy()
 		{
-			//mSpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, null, null, mCamera.Transform);
 			foreach (Enemy e in GameLogic.LevelSceneData.Enemies)
 				e.Draw(mRenderer);
-			//mSpriteBatch.End();
 		}
 
 		private void DrawLights()
@@ -511,12 +488,28 @@ namespace MenuEditor.GameContent.Scenes
 					if (MouseHelper.Instance.IsWheelUp)
 					{
 						GameLogic.SelectedEntity.DrawZ--;
+						GameLogic.SelectedEntity.NormalZ = GameLogic.SelectedEntity.DrawZ / MAX_DEPTH;
+						if (IsRightType<PointLight>())
+						{
+							PointLight l = (PointLight)GameLogic.SelectedEntity;
+							l.Depth += 0.005f;
+							if (l.Depth > 1.0f)
+								l.Depth = 1.0f;
+						}
 						somethingUpdated = true;
 						SortLists();
 					}
 					if (MouseHelper.Instance.IsWheelDown)
 					{
 						GameLogic.SelectedEntity.DrawZ++;
+						GameLogic.SelectedEntity.NormalZ = GameLogic.SelectedEntity.DrawZ / MAX_DEPTH;
+						if (IsRightType<PointLight>())
+						{
+							PointLight l = (PointLight)GameLogic.SelectedEntity;
+							l.Depth -= 0.005f;
+							if (l.Depth < 0.0f)
+								l.Depth = 0.0f;
+						}
 						somethingUpdated = true;
 						SortLists();
 					}
@@ -779,52 +772,73 @@ namespace MenuEditor.GameContent.Scenes
 		{
 			if (GameLogic.GhostData.Name.Contains("Branch"))
 			{
+				InteractiveObject io = LoadInteractiveObject();
 				Branch a = new Branch(GameLogic.GhostData.Name);
-				a.Position = CalculatePlacePositionOrigin(a);
+				a.Position = new Vector2((int)(MouseHelper.Position.X - mCamera.Position.X), (int)(MouseHelper.Position.Y - mCamera.Position.Y));
 				a.LoadContent();
-				a.DrawZ = a.PositionY + a.Height;
-				a.NormalZ = a.DrawZ / MAX_DEPTH;
-				a.CollisionBox = new Rectangle(a.PositionX, a.PositionY, a.Width, a.Height);
+				a.DrawZ = io.DrawZ;
+				a.NormalZ = io.NormalZ;
+				a.CollisionRectList = io.CollisionRectList;
+				a.ActionRectList = io.ActionRectList;
+				a.ApplySettings();
+				a.CollisionBox = new Rectangle(a.PositionX, a.PositionY, 64, 64);
 				GameLogic.LevelSceneData.Items.Add(a);
 			}
 			else if (GameLogic.GhostData.Name.Contains("Knife"))
 			{
+				InteractiveObject io = LoadInteractiveObject();
 				Knife d = new Knife(GameLogic.GhostData.Name);
-				d.Position = CalculatePlacePositionOrigin(d);
+				d.Position = new Vector2((int)(MouseHelper.Position.X - mCamera.Position.X), (int)(MouseHelper.Position.Y - mCamera.Position.Y));
 				d.LoadContent();
-				d.DrawZ = d.PositionY + d.Height;
-				d.NormalZ = d.DrawZ / MAX_DEPTH;
-				d.CollisionBox = new Rectangle(d.PositionX, d.PositionY, d.Width, d.Height);
+				d.DrawZ = io.DrawZ;
+				d.NormalZ = io.NormalZ;
+				d.CollisionRectList = io.CollisionRectList;
+				d.ActionRectList = io.ActionRectList;
+				d.ApplySettings();
+				d.CollisionBox = new Rectangle(d.PositionX, d.PositionY, 64, 64);
 				GameLogic.LevelSceneData.Items.Add(d);
 			}
 			else if (GameLogic.GhostData.Name.Contains("Key"))
 			{
+				InteractiveObject io = LoadInteractiveObject();
 				Key t = new Key(GameLogic.GhostData.Name);
-				t.Position = CalculatePlacePositionOrigin(t);
+				t.Position = new Vector2((int)(MouseHelper.Position.X - mCamera.Position.X), (int)(MouseHelper.Position.Y - mCamera.Position.Y));
 				t.LoadContent();
-				t.DrawZ = t.PositionY + t.Height;
-				t.NormalZ = t.DrawZ / MAX_DEPTH;
-				t.CollisionBox = new Rectangle(t.PositionX, t.PositionY, t.Width, t.Height);
+				t.DrawZ = io.DrawZ;
+				t.NormalZ = io.NormalZ;
+				t.CollisionRectList = io.CollisionRectList;
+				t.ActionRectList = io.ActionRectList;
+				t.ApplySettings();
+				t.CollisionBox = new Rectangle(t.PositionX, t.PositionY, 64, 64);
+				
 				GameLogic.LevelSceneData.Items.Add(t);
 			}
-			else if (GameLogic.GhostData.Name.Contains("Lantern"))
+			else if (GameLogic.GhostData.Name.Contains("laterne"))
 			{
+				InteractiveObject io = LoadInteractiveObject();
 				Lantern a = new Lantern(GameLogic.GhostData.Name);
-				a.Position = CalculatePlacePositionOrigin(a);
+				a.Position = new Vector2((int)(MouseHelper.Position.X - mCamera.Position.X), (int)(MouseHelper.Position.Y - mCamera.Position.Y));
 				a.LoadContent();
-				a.DrawZ = a.PositionY + a.Height;
-				a.NormalZ = a.DrawZ / MAX_DEPTH;
-				a.CollisionBox = new Rectangle(a.PositionX, a.PositionY, a.Width, a.Height);
+				a.DrawZ = io.DrawZ;
+				a.NormalZ = io.NormalZ;
+				a.CollisionRectList = io.CollisionRectList;
+				a.ActionRectList = io.ActionRectList;
+				a.ApplySettings();
+				a.CollisionBox = new Rectangle(a.PositionX, a.PositionY, 64, 64);
 				GameLogic.LevelSceneData.Items.Add(a);
 			}
 			else if (GameLogic.GhostData.Name.Contains("Matches"))
 			{
+				InteractiveObject io = LoadInteractiveObject();
 				Matches d = new Matches(GameLogic.GhostData.Name);
-				d.Position = CalculatePlacePositionOrigin(d);
+				d.Position = new Vector2((int)(MouseHelper.Position.X - mCamera.Position.X), (int)(MouseHelper.Position.Y - mCamera.Position.Y));
 				d.LoadContent();
-				d.DrawZ = d.PositionY + d.Height;
-				d.NormalZ = d.DrawZ / MAX_DEPTH;
-				d.CollisionBox = new Rectangle(d.PositionX, d.PositionY, d.Width, d.Height);
+				d.DrawZ = io.DrawZ;
+				d.NormalZ = io.NormalZ;
+				d.CollisionRectList = io.CollisionRectList;
+				d.ActionRectList = io.ActionRectList;
+				d.ApplySettings();
+				d.CollisionBox = new Rectangle(d.PositionX, d.PositionY, 64, 64);
 				GameLogic.LevelSceneData.Items.Add(d);
 			}
 
@@ -839,7 +853,7 @@ namespace MenuEditor.GameContent.Scenes
 			if (GameLogic.GhostData.Name.Contains("spider"))
 			{
 				InteractiveObject io = LoadInteractiveObject();
-				Spider w = new Spider("spider", Vector2.Zero);
+				Spider w = new Spider("spider");
 				w.LoadContent();
 				w.Position = new Vector2((int)(MouseHelper.Position.X - mCamera.Position.X), (int)(MouseHelper.Position.Y - mCamera.Position.Y));
 				w.DrawZ = io.DrawZ;
@@ -854,7 +868,7 @@ namespace MenuEditor.GameContent.Scenes
 			else if (GameLogic.GhostData.Name.Contains("witch"))
 			{
 				InteractiveObject io = LoadInteractiveObject();
-				Witch w = new Witch("witch", Vector2.Zero);
+				Witch w = new Witch("witch");
 				w.LoadContent();
 				w.Position = new Vector2((int)(MouseHelper.Position.X - mCamera.Position.X), (int)(MouseHelper.Position.Y - mCamera.Position.Y));
 				w.DrawZ = io.DrawZ;
@@ -868,12 +882,8 @@ namespace MenuEditor.GameContent.Scenes
 			}
 			else if (GameLogic.GhostData.Name.Contains("wolf"))
 			{
-				//Wolf w = new Wolf();
-				//w.Position = CalculatePlacePositionOrigin(new Vector2(32, 32));
-				//GameLogic.LevelSceneData.Enemies.Add(w);
-				//GameLogic.SelectedEntity = w;
 				InteractiveObject io = LoadInteractiveObject();
-				Wolf w = new Wolf("wolf", Vector2.Zero);
+				Wolf w = new Wolf("wolf");
 				w.LoadContent();
 				w.Position = new Vector2((int)(MouseHelper.Position.X - mCamera.Position.X), (int)(MouseHelper.Position.Y - mCamera.Position.Y));
 				w.DrawZ = io.DrawZ;
@@ -884,6 +894,21 @@ namespace MenuEditor.GameContent.Scenes
 				w.CollisionBox = io.CollisionBox;
 
 				GameLogic.LevelSceneData.Enemies.Add(w);
+			}
+			else if (GameLogic.GhostData.Name.Contains("mother"))
+			{
+				InteractiveObject io = LoadInteractiveObject();
+				Mother m = new Mother("mother");
+				m.LoadContent();
+				m.Position = new Vector2((int)(MouseHelper.Position.X - mCamera.Position.X), (int)(MouseHelper.Position.Y - mCamera.Position.Y));
+				m.DrawZ = io.DrawZ;
+				m.NormalZ = io.NormalZ;
+				m.ActionRectList = io.ActionRectList;
+				m.CollisionRectList = io.CollisionRectList;
+				m.ApplySettings();
+				m.CollisionBox = io.CollisionBox;
+
+				GameLogic.LevelSceneData.Enemies.Add(m);
 			}
 
 			somethingUpdated = true;
@@ -905,6 +930,7 @@ namespace MenuEditor.GameContent.Scenes
 				PointLight p = new PointLight();
 				p.Position = CalculatePlacePositionOrigin(new Vector2(32, 32));
 				p.Depth = (p.Position.Y + 32) / MAX_DEPTH;
+				p.Intensity = 15;
 				GameLogic.LevelSceneData.Lights.Add(p);
 				GameLogic.SelectedEntity = p;
 				mLightState = LightState.Range;
@@ -933,7 +959,8 @@ namespace MenuEditor.GameContent.Scenes
 			if (foundBy < 0) return;
 
 			PointLight l = (PointLight)GameLogic.LevelSceneData.Lights[foundBy];
-			l.Radius = Vector2.Distance(l.Position, (new Vector2(MouseHelper.Position.X - (int)mCamera.Position.X, MouseHelper.Position.Y - (int)mCamera.Position.Y) - new Vector2(32, 32)));
+			//l.Radius = Vector2.Distance(l.Position, (new Vector2(MouseHelper.Position.X - (int)mCamera.Position.X, MouseHelper.Position.Y - (int)mCamera.Position.Y) - new Vector2(32, 32)));
+			l.Radius = 20;
 			l.SetDrawCircle();
 
 			if (MouseHelper.Instance.IsClickedLeft)
@@ -1174,6 +1201,7 @@ namespace MenuEditor.GameContent.Scenes
 					SaveDiffuseBackground(saveFileDialog1.FileName);
 					SaveNormalBackground(saveFileDialog1.FileName);
 					SaveDepthBackground(saveFileDialog1.FileName);
+					SaveAOBackground(saveFileDialog1.FileName);
 				}
 			}
 			MouseHelper.ResetClick();
@@ -1236,8 +1264,6 @@ namespace MenuEditor.GameContent.Scenes
 				c.LoadContent();
 				c.ApplySettings();
 			}
-
-
 		}
 
 		private void ShowXmlEditor()
@@ -1248,7 +1274,6 @@ namespace MenuEditor.GameContent.Scenes
 				mXmlForm.Show();
 				GameLogic.IsXmlFormShow = true;
 			}
-
 		}
         
         public void CreateNewScene(Rectangle pGameScreenSize)
@@ -1259,6 +1284,8 @@ namespace MenuEditor.GameContent.Scenes
 			GameLogic.LevelSceneData.GamePlane = pGameScreenSize;
 			GameLogic.ZDepth = GameLogic.LevelSceneData.GamePlane.Height;
 			BaseObject.mIdAll = 0;
+			GameLogic.LevelSceneData.SceneAmbientLight = new AmbientLight();
+			mBackgroundTexture = null;
 		}
 
 		protected void SetDebugMode()
@@ -1375,9 +1402,7 @@ namespace MenuEditor.GameContent.Scenes
 			mSpriteBatch.Begin();
 			EngineSettings.Graphics.GraphicsDevice.Clear(new Color(129,129,255));
 			foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
-				;
-// Normalmap rausspeichern !!!
-//				go.DrawNormal(mSpriteBatch);
+				go.DrawNormal(mSpriteBatch);
 			mSpriteBatch.End();
 
 			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(null);
@@ -1398,9 +1423,28 @@ namespace MenuEditor.GameContent.Scenes
 			mSpriteBatch.Begin();
 			EngineSettings.Graphics.GraphicsDevice.Clear(Color.White);
 			foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
-				;
-			// DepthMap rausspeichern!!!
-			//	go.DrawDepth(mSpriteBatch);
+				go.DrawDepth(mSpriteBatch);
+			mSpriteBatch.End();
+
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(null);
+
+			rt.SaveAsPng(myStream, rt.Width, rt.Height);
+			myStream.Close();
+		}
+
+		private void SaveAOBackground(String pPath)
+		{
+			pPath = pPath.Replace("\\hug\\", "\\backgrounds\\");
+			pPath = pPath.Replace(".hug", "AO.png");
+			Stream myStream = File.Create(pPath);
+			RenderTarget2D rt = new RenderTarget2D(EngineSettings.Graphics.GraphicsDevice, mCamera.GameScreen.Width, mCamera.GameScreen.Height);
+
+			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(rt);
+
+			mSpriteBatch.Begin();
+			EngineSettings.Graphics.GraphicsDevice.Clear(Color.White);
+			foreach (GameObject go in GameLogic.LevelSceneData.BackgroundSprites)
+				go.DrawAO(mSpriteBatch);
 			mSpriteBatch.End();
 
 			EngineSettings.Graphics.GraphicsDevice.SetRenderTarget(null);
@@ -1443,6 +1487,15 @@ namespace MenuEditor.GameContent.Scenes
 		#endregion
 		#endregion
 
+		private bool IsRightType<T>()
+		{
+			if (GameLogic.SelectedEntity == null) return false;
+
+			if (GameLogic.SelectedEntity.GetType() == typeof(T))
+				return true;
+
+			return false;
+		}
 		#endregion
 	}
 }

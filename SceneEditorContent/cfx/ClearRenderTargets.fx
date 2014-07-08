@@ -3,7 +3,8 @@ struct GBuffer
 {
 	float4 Diffuse	: COLOR0;
 	float4 Normal	: COLOR1;
-	float4 Depth	: COLOR2;
+	float4 Ao		: COLOR2;
+	float4 Depth	: COLOR3;
 };
 
 
@@ -16,10 +17,10 @@ GBuffer PS_Main()
 {
 	GBuffer output = (GBuffer)1;
 
-	output.Diffuse.rgba		= 0.0f;
+	output.Diffuse.rgba	= 0.0f;
 	output.Normal.rgb	= float3(0.5,0.5,1.0);
-	output.Normal.a		= 1.0f;
-	output.Depth.rgb   = 0.0f;
+	output.Ao			= 1.0f;
+	output.Depth.rgb	= 0.0f;
 
 	return output;
 }

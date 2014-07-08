@@ -124,7 +124,7 @@ namespace MenuEditor.GameContent.Interface
 								GameLogic.EState = EditorState.PlaceEnemy;
 							else if (d.Name.Contains("Collectable"))
 								GameLogic.EState = EditorState.PlaceCollectable;
-							else if (d.Name.Contains("Item"))
+							else if (d.Name.Contains("Item") || d.Name.Contains("laterne"))
 								GameLogic.EState = EditorState.PlaceItem;
 							else if (d.Name.Contains("Light"))
 								GameLogic.EState = EditorState.PlaceLight;
@@ -171,7 +171,7 @@ namespace MenuEditor.GameContent.Interface
         {
             mEntity.Clear();
 
-			Dictionary<string, Texture2D> Resourcen = TextureManager.Instance.GetAllEntetiesWithout(new List<string>() { "pixel", "Normal", "Depth" });
+			Dictionary<string, Texture2D> Resourcen = TextureManager.Instance.GetAllEntetiesWithout(new List<string>() { "pixel", "Normal", "Depth", "AO" });
 			int posX = THUMBNAIL_PADDING;
 			int posY = THUMBNAIL_PADDING;
             int index = 0;

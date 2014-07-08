@@ -1,0 +1,18 @@
+{
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "img/ObjStonePush1", "bone": "root", "attachment": "front" }
+],
+"skins": {
+	"front": {
+		"img/ObjStonePush1": {
+			"front": { "name": "img/ObjStonePush2", "y": 35, "width": 65, "height": 70 }
+		}
+	}
+},
+"animations": {
+	"animation": {}
+}
+}

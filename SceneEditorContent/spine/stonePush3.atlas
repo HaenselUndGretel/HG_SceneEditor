@@ -1,0 +1,13 @@
+
+stonePush3.png
+size: 65,72
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+img/ObjStonePush3
+  rotate: false
+  xy: 2, 2
+  size: 63, 70
+  orig: 63, 70
+  offset: 0, 0
+  index: -1

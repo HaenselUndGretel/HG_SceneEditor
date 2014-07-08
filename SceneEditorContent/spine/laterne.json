@@ -1,0 +1,29 @@
+{
+"bones": [
+	{ "name": "root" },
+	{ "name": "top", "parent": "root", "length": 44.77, "x": -0.78, "y": 6.52, "rotation": 89.54 }
+],
+"slots": [
+	{ "name": "laterne", "bone": "root", "attachment": "laterne" }
+],
+"skins": {
+	"front": {
+		"laterne": {
+			"laterne": { "name": "laterneFrontDiffuse", "y": 25.99, "width": 26, "height": 50 }
+		}
+	},
+	"rear": {
+		"laterne": {
+			"laterne": { "name": "laterneBackDiffuse", "y": 26, "width": 26, "height": 50 }
+		}
+	},
+	"side": {
+		"laterne": {
+			"laterne": { "name": "laterneSideDiffuse", "y": 26, "width": 26, "height": 50 }
+		}
+	}
+},
+"animations": {
+	"animation": {}
+}
+}

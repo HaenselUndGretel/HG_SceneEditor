@@ -1,0 +1,18 @@
+{
+"bones": [
+	{ "name": "root" }
+],
+"slots": [
+	{ "name": "root", "bone": "root", "attachment": "root" }
+],
+"skins": {
+	"front": {
+		"root": {
+			"root": { "name": "spacer", "width": 10, "height": 10 }
+		}
+	}
+},
+"animations": {
+	"animation": {}
+}
+}

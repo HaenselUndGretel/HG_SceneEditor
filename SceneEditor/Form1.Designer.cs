@@ -77,6 +77,8 @@
 			this.groupBox8 = new System.Windows.Forms.GroupBox();
 			this.label18 = new System.Windows.Forms.Label();
 			this.comboBox5 = new System.Windows.Forms.ComboBox();
+			this.textBox11 = new System.Windows.Forms.TextBox();
+			this.label19 = new System.Windows.Forms.Label();
 			this.GroupLists.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.groupBox1.SuspendLayout();
@@ -345,7 +347,9 @@
 			this.comboBox2.Items.AddRange(new object[] {
             "None",
             "CaughtInCobweb",
+            "FreeFromCobweb",
             "CaughtInSwamp",
+            "FreeFromSwamp",
             "KnockOverTree",
             "BalanceOverTree",
             "PushRock",
@@ -356,7 +360,10 @@
             "UseKey",
             "PushDoor",
             "PullDoor",
+            "UseChalk",
             "UseWell",
+            "UseItem",
+            "SwitchItem",
             "BalanceOverBrokenTree"});
 			this.comboBox2.Location = new System.Drawing.Point(143, 20);
 			this.comboBox2.Name = "comboBox2";
@@ -368,22 +375,24 @@
 			// 
 			this.groupBox4.BackColor = System.Drawing.Color.Transparent;
 			this.groupBox4.Controls.Add(this.panel2);
+			this.groupBox4.Controls.Add(this.label19);
 			this.groupBox4.Controls.Add(this.label12);
 			this.groupBox4.Controls.Add(this.label11);
+			this.groupBox4.Controls.Add(this.textBox11);
 			this.groupBox4.Controls.Add(this.textBox8);
 			this.groupBox4.Controls.Add(this.textBox7);
 			this.groupBox4.Controls.Add(this.textBox1);
 			this.groupBox4.Controls.Add(this.label10);
 			this.groupBox4.Location = new System.Drawing.Point(173, 340);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(399, 137);
+			this.groupBox4.Size = new System.Drawing.Size(399, 173);
 			this.groupBox4.TabIndex = 5;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "Light";
 			// 
 			// panel2
 			// 
-			this.panel2.Location = new System.Drawing.Point(6, 105);
+			this.panel2.Location = new System.Drawing.Point(9, 126);
 			this.panel2.Name = "panel2";
 			this.panel2.Size = new System.Drawing.Size(388, 21);
 			this.panel2.TabIndex = 8;
@@ -624,6 +633,23 @@
 			this.comboBox5.TabIndex = 0;
 			this.comboBox5.SelectedIndexChanged += new System.EventHandler(this.comboBox5_SelectedIndexChanged);
 			// 
+			// textBox11
+			// 
+			this.textBox11.Location = new System.Drawing.Point(141, 105);
+			this.textBox11.Name = "textBox11";
+			this.textBox11.Size = new System.Drawing.Size(252, 21);
+			this.textBox11.TabIndex = 6;
+			this.textBox11.TextChanged += new System.EventHandler(this.textBox11_TextChanged);
+			// 
+			// label19
+			// 
+			this.label19.AutoSize = true;
+			this.label19.Location = new System.Drawing.Point(4, 108);
+			this.label19.Name = "label19";
+			this.label19.Size = new System.Drawing.Size(50, 14);
+			this.label19.TabIndex = 7;
+			this.label19.Text = "Intensity:";
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 14F);
@@ -724,6 +750,8 @@
 		private System.Windows.Forms.GroupBox groupBox8;
 		private System.Windows.Forms.Label label18;
 		private System.Windows.Forms.ComboBox comboBox5;
+		private System.Windows.Forms.Label label19;
+		private System.Windows.Forms.TextBox textBox11;
 	}
 }
 

@@ -1,0 +1,27 @@
+
+laterne.png
+size: 84,52
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+laterneBackDiffuse
+  rotate: false
+  xy: 2, 2
+  size: 26, 50
+  orig: 26, 50
+  offset: 0, 0
+  index: -1
+laterneFrontDiffuse
+  rotate: false
+  xy: 30, 2
+  size: 26, 50
+  orig: 26, 50
+  offset: 0, 0
+  index: -1
+laterneSideDiffuse
+  rotate: false
+  xy: 58, 2
+  size: 26, 50
+  orig: 26, 50
+  offset: 0, 0
+  index: -1

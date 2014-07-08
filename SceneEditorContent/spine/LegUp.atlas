@@ -1,0 +1,83 @@
+
+LegUp.png
+size: 228,44
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+front/diffuse/armLeft_front
+  rotate: true
+  xy: 130, 2
+  size: 13, 25
+  orig: 13, 25
+  offset: 0, 0
+  index: -1
+front/diffuse/armRight_front
+  rotate: true
+  xy: 157, 2
+  size: 13, 25
+  orig: 13, 25
+  offset: 0, 0
+  index: -1
+front/diffuse/body_front
+  rotate: true
+  xy: 172, 20
+  size: 24, 43
+  orig: 24, 43
+  offset: 0, 0
+  index: -1
+front/diffuse/footLeft_front
+  rotate: true
+  xy: 184, 10
+  size: 8, 44
+  orig: 8, 44
+  offset: 0, 0
+  index: -1
+front/diffuse/footRight_front
+  rotate: false
+  xy: 2, 2
+  size: 8, 42
+  orig: 8, 42
+  offset: 0, 0
+  index: -1
+front/diffuse/handLeft_Front
+  rotate: false
+  xy: 217, 35
+  size: 9, 9
+  orig: 9, 9
+  offset: 0, 0
+  index: -1
+front/diffuse/handRight_Front
+  rotate: false
+  xy: 217, 24
+  size: 9, 9
+  orig: 9, 9
+  offset: 0, 0
+  index: -1
+front/diffuse/head_front
+  rotate: false
+  xy: 106, 5
+  size: 22, 39
+  orig: 22, 39
+  offset: 0, 0
+  index: -1
+front/diffuse/lowerBody_front
+  rotate: true
+  xy: 12, 5
+  size: 39, 92
+  orig: 39, 92
+  offset: 0, 0
+  index: -1
+front/diffuse/shouderLeft_front
+  rotate: false
+  xy: 130, 17
+  size: 19, 27
+  orig: 19, 27
+  offset: 0, 0
+  index: -1
+front/diffuse/shouderRight_front
+  rotate: false
+  xy: 151, 17
+  size: 19, 27
+  orig: 19, 27
+  offset: 0, 0
+  index: -1

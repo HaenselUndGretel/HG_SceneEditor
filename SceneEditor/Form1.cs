@@ -321,13 +321,13 @@ namespace Xml_Editor
 		private void SetInteractiveObjectInfo()
 		{
 			InteractiveObject io = (InteractiveObject)GameLogic.SelectedEntity;
-			int tmp = io.ActionId;
-			if (tmp > 4)
-				comboBox2.SelectedIndex = tmp - 2;
-			else if (tmp > 2)
-				comboBox2.SelectedIndex = tmp - 1;
-			else
-				comboBox2.SelectedIndex = tmp;
+			//int tmp = io.ActionId;
+			//if (tmp > 4)
+			//	comboBox2.SelectedIndex = tmp - 2;
+			//else if (tmp > 2)
+			//	comboBox2.SelectedIndex = tmp - 1;
+			//else
+			comboBox2.SelectedIndex = io.ActionId;
 
 		}
 
@@ -344,12 +344,15 @@ namespace Xml_Editor
 				int radius = (int)pl.Radius;
 				textBox7.Text = radius.ToString();
 				textBox8.Text = "";
+				textBox11.Text = pl.Intensity.ToString();
 			}
 			else if(l.GetType() == typeof(DirectionLight))
 			{
 				textBox7.Text = "";
 				textBox8.Text = ConvertVector3NormalizedToValue(GameLogic.LevelSceneData.SceneDirectionLight.Direction, 10).ToString();
 			}
+
+			textBox11.Text = l.Intensity.ToString();
 		}
 		
 		private void SetEventInfo()
@@ -410,11 +413,11 @@ namespace Xml_Editor
 		#region ApplyInteractiveObjectInfo
 		private int ApplyInteractiveObjectActionId()
 		{
-			if (comboBox2.SelectedIndex > 4)
-				return comboBox2.SelectedIndex + 2;
-			else if (comboBox2.SelectedIndex > 2)
-				return comboBox2.SelectedIndex + 1;
-			else
+			//if (comboBox2.SelectedIndex > 4)
+			//	return comboBox2.SelectedIndex + 2;
+			//else if (comboBox2.SelectedIndex > 2)
+			//	return comboBox2.SelectedIndex + 1;
+			//else
 				return comboBox2.SelectedIndex;
 		}
 		#endregion
@@ -681,6 +684,17 @@ namespace Xml_Editor
 
 			et.WitchSpawnPosition = ConvertTextboxToVector2(textBox10);
 			SetEventInfo();
+		}
+
+
+		private void textBox11_TextChanged(object sender, EventArgs e)
+		{
+			if (textBox11.Text == "") return;
+			if (!IsRightType<PointLight>()) return;
+
+			PointLight pl = (PointLight)GameLogic.SelectedEntity;
+			pl.Intensity = (float)Convert.ToDouble(textBox11.Text);
+			SetLightInfo();
 		}
 		#endregion
 

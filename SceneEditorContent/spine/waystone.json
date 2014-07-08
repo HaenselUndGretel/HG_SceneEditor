@@ -1,0 +1,19 @@
+{
+"bones": [
+	{ "name": "root" },
+	{ "name": "waystone", "parent": "root", "length": 154.65, "x": -0.26, "y": 0.46, "rotation": 90 }
+],
+"slots": [
+	{ "name": "ObjSaveStone", "bone": "waystone", "attachment": "front" }
+],
+"skins": {
+	"front": {
+		"ObjSaveStone": {
+			"front": { "name": "ObjSaveStone", "x": 80.55, "y": -0.26, "rotation": -90, "width": 54, "height": 160 }
+		}
+	}
+},
+"animations": {
+	"animation": {}
+}
+}

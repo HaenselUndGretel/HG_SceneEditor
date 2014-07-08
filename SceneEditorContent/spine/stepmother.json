@@ -1,0 +1,72 @@
+{
+"bones": [
+	{ "name": "root" },
+	{ "name": "hip", "parent": "root", "x": -1.18, "y": 104.02, "color": "9c0003ff" },
+	{ "name": "body", "parent": "hip", "length": 31.03, "x": 0.29, "y": 7.53, "rotation": 89.54, "color": "ff3f00ff" },
+	{ "name": "lowerBody", "parent": "hip", "length": 60.9, "y": -15.66, "rotation": -89.54, "color": "9c0002ff" },
+	{ "name": "footLeft", "parent": "lowerBody", "length": 35.96, "x": 51.68, "y": 8.58, "rotation": -1.37, "color": "00fff7ff" },
+	{ "name": "footRight", "parent": "lowerBody", "length": 35.68, "x": 51.84, "y": -8.52, "rotation": 1.35, "color": "fff703ff" },
+	{ "name": "head", "parent": "body", "length": 31.9, "x": 31.31, "y": 0.24, "rotation": -0.45, "color": "9c0700ff" },
+	{ "name": "shoulderLeft", "parent": "body", "length": 26.87, "x": 28.5, "y": -10.21, "rotation": -150.32, "color": "88ff00ff" },
+	{ "name": "shoulderRight", "parent": "body", "length": 23.64, "x": 26.6, "y": 9.77, "rotation": 147.15, "color": "167cebff" },
+	{ "name": "armLeft", "parent": "shoulderLeft", "length": 23.86, "x": 26.87, "y": -0.07, "rotation": -1.36, "color": "88ff00ff" },
+	{ "name": "armRight", "parent": "shoulderRight", "length": 23.73, "x": 23.64, "y": -0.08, "rotation": 7.62, "color": "167cebff" },
+	{ "name": "handLeft", "parent": "armLeft", "length": 9.49, "x": 23.86, "y": -0.14, "rotation": 3.15, "color": "88ff00ff" },
+	{ "name": "handRight", "parent": "armRight", "length": 10.5, "x": 23.73, "y": 0.15, "rotation": -2.25, "color": "167cebff" }
+],
+"slots": [
+	{ "name": "handLeft", "bone": "handLeft", "attachment": "handLeft" },
+	{ "name": "handRight", "bone": "handRight", "attachment": "handRight" },
+	{ "name": "armLeft", "bone": "armLeft", "attachment": "armLeft" },
+	{ "name": "armRight", "bone": "armRight", "attachment": "armRight" },
+	{ "name": "shoulderLeft", "bone": "shoulderLeft", "attachment": "shoulderLeft" },
+	{ "name": "shoulderRight", "bone": "shoulderRight", "attachment": "shoulderRight" },
+	{ "name": "footLeft", "bone": "footLeft", "attachment": "footLeft" },
+	{ "name": "footRight", "bone": "footRight", "attachment": "footRight" },
+	{ "name": "lowerBody", "bone": "lowerBody", "attachment": "lowerBody" },
+	{ "name": "body", "bone": "body", "attachment": "body" },
+	{ "name": "head", "bone": "head", "attachment": "head" }
+],
+"skins": {
+	"front": {
+		"armLeft": {
+			"armLeft": { "name": "front/diffuse/armLeft_front", "x": 12.36, "y": 0.34, "rotation": 62.14, "width": 13, "height": 25 }
+		},
+		"armRight": {
+			"armRight": { "name": "front/diffuse/armRight_front", "x": 12.72, "y": -0.3, "rotation": 115.67, "width": 13, "height": 25 }
+		},
+		"body": {
+			"body": { "name": "front/diffuse/body_front", "x": 10.59, "y": -0.29, "rotation": -89.54, "width": 24, "height": 43 }
+		},
+		"footLeft": {
+			"footLeft": { "name": "front/diffuse/footLeft_front", "x": 14.85, "y": -0.42, "rotation": 90.92, "width": 8, "height": 44 }
+		},
+		"footRight": {
+			"footRight": { "name": "front/diffuse/footRight_front", "x": 15.34, "y": 1.22, "rotation": 88.19, "width": 8, "height": 42 }
+		},
+		"handLeft": {
+			"handLeft": { "name": "front/diffuse/handLeft_Front", "x": 5.08, "y": 0.83, "rotation": 58.98, "width": 9, "height": 9 }
+		},
+		"handRight": {
+			"handRight": { "name": "front/diffuse/handRight_Front", "x": 6.56, "y": -2.16, "rotation": 117.93, "width": 9, "height": 9 }
+		},
+		"head": {
+			"head": { "name": "front/diffuse/head_front", "x": 15.79, "y": -0.59, "rotation": -89.09, "width": 22, "height": 39 }
+		},
+		"lowerBody": {
+			"lowerBody": { "name": "front/diffuse/lowerBody_front", "x": 16.22, "y": 0.81, "rotation": 89.54, "width": 39, "height": 92 }
+		},
+		"shoulderLeft": {
+			"shoulderLeft": { "name": "front/diffuse/shouderLeft_front", "x": 14.34, "y": -0.23, "rotation": 60.77, "width": 19, "height": 27 }
+		},
+		"shoulderRight": {
+			"shoulderRight": { "name": "front/diffuse/shouderRight_front", "x": 12.89, "y": 0.21, "rotation": 123.3, "width": 19, "height": 27 }
+		}
+	},
+	"rear": {},
+	"side": {}
+},
+"animations": {
+	"animation": {}
+}
+}

@@ -1,0 +1,19 @@
+{
+"bones": [
+	{ "name": "root" },
+	{ "name": "ObjShelf", "parent": "root", "length": 210, "x": -0.5, "rotation": 89.54 }
+],
+"slots": [
+	{ "name": "ObjShelf", "bone": "ObjShelf", "attachment": "front" }
+],
+"skins": {
+	"front": {
+		"ObjShelf": {
+			"front": { "name": "ObjShelf", "x": 89, "y": 0.19, "rotation": -89.54, "width": 144, "height": 250 }
+		}
+	}
+},
+"animations": {
+	"animation": {}
+}
+}
